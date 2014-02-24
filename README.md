@@ -3,7 +3,7 @@ Flappy NINJA!
 
 Flappy-bird (ou piou-piou vs cactus) like en JAVA avec le framework Artemis et Slick2D
 
-## Flappy NINJA!
+### Description
 
 Ce projet utilise le famework [Artemis](http://gamadu.com/artemis/ "Artemis Framework") pour la logique du jeu
 et la librairie de jeu [Slick 2D](http://slick.ninjacave.com/ "slick2D") pour les graphiques.
@@ -27,5 +27,6 @@ Pour faire fonctionner ce projet sur Intellij, veuillez suivre ces étapes:
     * Cliquez sur le '+' pour ajouter une configuration de type 'Application'
     * Dans 'Main Class' entrez `Launcher`
     * Dans 'Vm Options' ajoutez cette ligne `-Djava.library.path=<le chemin vers le dossier slick2D>`
+    * Sauvegardez la configuration.
 
 Le projet est configuré devrait maintenant pouvoir fonctionner sur vos machines.

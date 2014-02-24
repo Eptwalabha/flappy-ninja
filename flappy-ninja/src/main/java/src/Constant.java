@@ -10,7 +10,6 @@ public class Constant {
     public class BasicGameStateID {
         public static final int GAME = 0;
         public static final int PAUSE = 1;
-        public static final int GAMEOVER = 2;
-        public static final int MENU = 3;
     }
+
 }
