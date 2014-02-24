@@ -13,20 +13,19 @@ import src.utils.SpriteGUI;
  * Date: 21/02/14
  * Time: 14:08
  */
-public class SpawnPipeSystem extends IntervalEntitySystem {
+public class SpawnFloorSystem extends IntervalEntitySystem {
 
     private SpriteGUI spriteGUI;
     private Camera camera;
 
-    public SpawnPipeSystem(float interval, Camera cameraInformation, SpriteGUI spriteGUI) {
-        super(Aspect.getEmpty(), interval);
+    public SpawnFloorSystem(Camera cameraInformation, SpriteGUI spriteGUI) {
+        super(Aspect.getEmpty(), 75);
         this.spriteGUI = spriteGUI;
         this.camera = cameraInformation;
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-//        EntityFactory.createPipe(world, (float)(Math.random() * 75 + 100));
-        EntityFactory.createPipe(world, camera, spriteGUI, 100f);
+        EntityFactory.createFloor(world, camera, spriteGUI);
     }
 }

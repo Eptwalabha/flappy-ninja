@@ -10,6 +10,7 @@ import com.artemis.utils.ImmutableBag;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import src.components.Camera;
 import src.components.Position;
 import src.components.Texture;
 import src.components.Transformation;
@@ -31,8 +32,11 @@ public class DrawDepthImageSystem extends EntitySystem {
     @Mapper
     ComponentMapper<Transformation> transformationComponentMapper;
 
-    public DrawDepthImageSystem() {
+    private Camera camera;
+
+    public DrawDepthImageSystem(Camera camera) {
         super(Aspect.getAspectForAll(Texture.class, Position.class));
+        this.camera = camera;
     }
 
     private void drawEntity(Entity entity) {
@@ -47,7 +51,7 @@ public class DrawDepthImageSystem extends EntitySystem {
             // TODO appliquer les transformations scale et rotation sur l'image.
         }
 
-        image.draw(position.getX(), 500 - position.getY());
+        image.draw(position.getX() - camera.cameraPosition.getX(), camera.screenHeight - (position.getY() - camera.cameraPosition.getY()));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import src.components.Camera;
 import src.components.EntityShape;
 import src.components.Position;
 
@@ -23,9 +24,12 @@ public class DrawEntityShapeSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<EntityShape> entityShapeComponentMapper;
 
-    public DrawEntityShapeSystem(GameContainer gameContainer) {
+    private Camera camera;
+
+    public DrawEntityShapeSystem(GameContainer gameContainer, Camera camera) {
         super(Aspect.getAspectForAll(Position.class, EntityShape.class));
         this.graphics = gameContainer.getGraphics();
+        this.camera = camera;
     }
 
     @Override
@@ -33,7 +37,8 @@ public class DrawEntityShapeSystem extends EntityProcessingSystem {
 
         Position position = positionComponentMapper.get(entity);
         EntityShape shape = entityShapeComponentMapper.get(entity);
-        shape.shape.setLocation(position.x, 500 - position.y);
+        shape.shape.setLocation(position.getX() - camera.cameraPosition.getX(),
+                camera.screenHeight - (position.getY() - camera.cameraPosition.getY()));
         graphics.setColor(shape.color);
         graphics.fill(shape.shape);
     }

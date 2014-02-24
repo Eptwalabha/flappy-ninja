@@ -10,6 +10,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Rectangle;
 import src.components.Button;
+import src.components.Camera;
 
 /**
  * User: eptwalabha
@@ -22,9 +23,12 @@ public class DrawButtonSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Button> buttonComponentMapper;
 
-    public DrawButtonSystem(GameContainer gameContainer) {
+    private Camera camera;
+
+    public DrawButtonSystem(GameContainer gameContainer, Camera camera) {
         super(Aspect.getAspectForAll(Button.class));
         this.graphics = gameContainer.getGraphics();
+        this.camera = camera;
     }
 
     @Override

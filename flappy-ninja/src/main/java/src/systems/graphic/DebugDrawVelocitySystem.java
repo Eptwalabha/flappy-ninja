@@ -8,6 +8,7 @@ import com.artemis.systems.EntityProcessingSystem;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import src.components.Camera;
 import src.components.Position;
 import src.components.Velocity;
 
@@ -24,9 +25,12 @@ public class DebugDrawVelocitySystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Velocity> velocityComponentMapper;
 
-    public DebugDrawVelocitySystem(GameContainer gameContainer) {
+    private Camera camera;
+
+    public DebugDrawVelocitySystem(GameContainer gameContainer, Camera camera) {
         super(Aspect.getAspectForAll(Position.class, Velocity.class));
         this.graphics = gameContainer.getGraphics();
+        this.camera = camera;
     }
 
     @Override
@@ -36,6 +40,8 @@ public class DebugDrawVelocitySystem extends EntityProcessingSystem {
         Velocity velocity = velocityComponentMapper.get(entity);
 
         graphics.setColor(Color.blue);
-        graphics.drawLine(position.x, 500 - position.y, position.x + velocity.x / 10, 500 - (position.y + velocity.y / 10));
+        graphics.drawLine(position.getX() - camera.cameraPosition.getX(),
+                camera.screenHeight - position.getY() - camera.cameraPosition.getY(),
+                position.x + velocity.x / 10, 500 - (position.y + velocity.y / 10));
     }
 }

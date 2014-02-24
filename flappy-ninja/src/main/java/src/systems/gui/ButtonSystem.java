@@ -8,6 +8,7 @@ import com.artemis.systems.EntityProcessingSystem;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import src.components.Button;
+import src.components.Camera;
 
 /**
  * User: eptwalabha
@@ -19,11 +20,14 @@ public class ButtonSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Button> buttonComponentMapper;
 
+    private Camera camera;
+
     private Input input;
 
-    public ButtonSystem(GameContainer gameContainer) {
+    public ButtonSystem(GameContainer gameContainer, Camera camera) {
         super(Aspect.getAspectForAll(Button.class));
         input = gameContainer.getInput();
+        this.camera = camera;
     }
 
     @Override
