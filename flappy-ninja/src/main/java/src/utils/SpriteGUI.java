@@ -62,7 +62,7 @@ public class SpriteGUI {
 
         float ratio = this.tileWidth / (width * 1f);
 //		System.out.println("sans =" + this.pivotX + "; ratio =" + (this.pivotX / ratio));
-        Image image =this.spriteSheet.getSprite(x, y).getScaledCopy(width, (int) (width * this.tileRatio));
+        Image image = this.spriteSheet.getSprite(x, y).getScaledCopy(width, (int) (width * this.tileRatio));
         image.setCenterOfRotation(this.pivotX / ratio, this.pivotY / ratio);
         image.setRotation(angle);
         return image;

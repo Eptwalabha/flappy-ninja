@@ -1,4 +1,4 @@
-package src;
+package src.utils;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -89,8 +89,8 @@ public class SortedImage extends Image {
     /**
      * Create an empty image
      *
-     * @param width The width of the image
-     * @param height The height of the image
+     * @param width The screenWidth of the image
+     * @param height The screenHeight of the image
      * @param f The filter to apply to scaling the new image
      * @throws SlickException Indicates a failure to create the underlying resource
      */
@@ -100,8 +100,8 @@ public class SortedImage extends Image {
     /**
      * Create an empty image
      *
-     * @param width The width of the image
-     * @param height The height of the image
+     * @param width The screenWidth of the image
+     * @param height The screenHeight of the image
      * @throws SlickException Indicates a failure to create the underlying resource
      */
     public SortedImage(int width, int height) throws SlickException {

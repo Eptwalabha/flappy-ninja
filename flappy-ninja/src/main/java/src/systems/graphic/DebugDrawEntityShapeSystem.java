@@ -35,7 +35,7 @@ public class DebugDrawEntityShapeSystem extends EntityProcessingSystem {
         Position position = positionComponentMapper.get(entity);
         EntityShape shape = entityShapeComponentMapper.get(entity);
         shape.shape.setLocation(position.x, 500 - position.y);
-        graphics.setColor(Color.green);
+        graphics.setColor(Color.red);
         graphics.draw(shape.shape);
     }
 }

@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import src.entity.EntityFactory;
+import src.utils.SpriteGUI;
 
 /**
  * User: eptwalabha
@@ -12,13 +13,17 @@ import src.entity.EntityFactory;
  * Time: 14:08
  */
 public class SpawnPipeSystem extends IntervalEntitySystem {
-    public SpawnPipeSystem(float interval) {
+
+    private SpriteGUI spriteGUI;
+
+    public SpawnPipeSystem(float interval, SpriteGUI spriteGUI) {
         super(Aspect.getEmpty(), interval);
+        this.spriteGUI = spriteGUI;
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
 //        EntityFactory.createPipe(world, (float)(Math.random() * 75 + 100));
-        EntityFactory.createPipe(world, 100f);
+        EntityFactory.createPipe(world, spriteGUI, 100f);
     }
 }
