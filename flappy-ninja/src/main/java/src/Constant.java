@@ -12,4 +12,10 @@ public class Constant {
         public static final int PAUSE = 1;
     }
 
+    public class Sprite {
+        public static final int PLAYER = 0;
+        public static final int PIPE = 1;
+        public static final int FLOOR = 2;
+
+    }
 }

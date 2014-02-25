@@ -130,21 +130,23 @@ public class EntityFactory {
         return camera;
     }
 
-    public static Entity createFloor(World world, Camera camera, SpriteGUI spriteGUI) {
+    public static int createFloor(World world, Camera camera, float tileWidth, int alreadySpawned) {
 
-        Entity floorBlock = world.createEntity();
+        float cameraScreenWidth = camera.screenWidth;
+        float positionCameraX = camera.cameraPosition.getX();
 
-        float cameraPositionX = camera.cameraPosition.getX();
-        float cameraPositionY = camera.cameraPosition.getY();
-        float cameraWidth = camera.screenWidth;
-        float spawnPositionX = cameraPositionX + cameraWidth + (cameraPositionX + cameraWidth) % 50 + 150;
+        int numberOfTilesToSpawn = (int) Math.floor((positionCameraX + cameraScreenWidth + 2 * tileWidth) / tileWidth) - alreadySpawned;
 
-        Position position = new Position(spawnPositionX, cameraPositionY + 30, camera.cameraPosition.origin);
+        for (int i = 0; i < numberOfTilesToSpawn; i++) {
 
-        floorBlock.addComponent(position);
-        floorBlock.addComponent(new Texture(spriteGUI.getSpriteAt(4, 0, 75, 75), 1));
-        floorBlock.addToWorld();
+            Entity floorTile = createBox(world, camera.cameraPosition.origin, i * tileWidth + alreadySpawned * tileWidth, 50, tileWidth, 50, Color.orange);
+            makeThatEntitySolid(floorTile);
+            Limit limit = new Limit(-2 * tileWidth, -2 * tileWidth, 4 * tileWidth + cameraScreenWidth, 4 * tileWidth + camera.screenHeight);
+            limit.origin = camera.cameraPosition;
+            floorTile.addComponent(limit);
+            floorTile.addToWorld();
+        }
 
-        return floorBlock;
+        return numberOfTilesToSpawn;
     }
 }

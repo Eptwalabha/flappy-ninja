@@ -42,6 +42,7 @@ public class DebugDrawVelocitySystem extends EntityProcessingSystem {
         graphics.setColor(Color.blue);
         graphics.drawLine(position.getX() - camera.cameraPosition.getX(),
                 camera.screenHeight - position.getY() - camera.cameraPosition.getY(),
-                position.x + velocity.x / 10, 500 - (position.y + velocity.y / 10));
+                (position.getX() - camera.cameraPosition.getX()) + velocity.x / 10,
+                camera.cameraPosition.getY() + camera.screenHeight - (position.y + velocity.y / 10));
     }
 }

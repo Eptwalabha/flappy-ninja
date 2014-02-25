@@ -2,30 +2,48 @@ package src.systems;
 
 import com.artemis.Aspect;
 import com.artemis.Entity;
-import com.artemis.systems.IntervalEntitySystem;
+import com.artemis.EntitySystem;
 import com.artemis.utils.ImmutableBag;
 import src.components.Camera;
 import src.entity.EntityFactory;
-import src.utils.SpriteGUI;
 
 /**
  * User: eptwalabha
- * Date: 21/02/14
- * Time: 14:08
+ * Date: 25/02/14
+ * Time: 21:39
  */
-public class SpawnFloorSystem extends IntervalEntitySystem {
+public class SpawnFloorSystem extends EntitySystem {
 
-    private SpriteGUI spriteGUI;
-    private Camera camera;
+    private float tileWidth;
+    private int tilesSpawned;
+    private Camera cameraInformation;
 
-    public SpawnFloorSystem(Camera cameraInformation, SpriteGUI spriteGUI) {
-        super(Aspect.getEmpty(), 75);
-        this.spriteGUI = spriteGUI;
-        this.camera = cameraInformation;
+    public SpawnFloorSystem(Camera cameraInformation) {
+        super(Aspect.getEmpty());
+        tileWidth = 50;
+        tilesSpawned = 0;
+        this.cameraInformation = cameraInformation;
+    }
+
+    public float getTileWidth() {
+        return tileWidth;
+    }
+
+    public void setTileWidth(float tileWidth) {
+        this.tileWidth = tileWidth;
     }
 
     @Override
     protected void processEntities(ImmutableBag<Entity> entities) {
-        EntityFactory.createFloor(world, camera, spriteGUI);
+        tilesSpawned += EntityFactory.createFloor(world, cameraInformation, tileWidth, tilesSpawned);
+    }
+
+    @Override
+    protected boolean checkProcessing() {
+        return true;
+    }
+
+    public int getTilesSpawned() {
+        return tilesSpawned;
     }
 }
