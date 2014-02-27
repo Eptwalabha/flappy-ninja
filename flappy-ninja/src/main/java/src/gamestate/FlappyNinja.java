@@ -18,7 +18,6 @@ import src.systems.graphic.*;
 import src.systems.gui.ButtonHandler;
 import src.systems.gui.ButtonSystem;
 import src.systems.interfaces.CollisionListener;
-import src.utils.SpriteGUI;
 
 /**
  * User: Eptwalabha
@@ -48,7 +47,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         worldOrigin = new Position(0, 0);
         float speed = 300;
 
-        SpriteGUI spriteGUI = new SpriteGUI("images/all_tiles.png", 12, 1);
+//        SpriteGUI spriteGUI = new SpriteGUI("images/all_tiles.png", 12, 1);
         parent = stateBasedGame;
         world = new World();
         world.initialize();
@@ -64,10 +63,9 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         // ajout des systèmes.
         world.setSystem(new GravitySystem());
         world.setSystem(new VelocitySystem());
-        world.setSystem(new BoundCollisionSystem());
         world.setSystem(new InputSystem(gameContainer));
-        world.setSystem(new CollisionSystem());
-        world.setSystem(new SpawnPipeSystem(800, cameraInformation, spriteGUI));
+        world.setSystem(new CheckCollisionSystem());
+        world.setSystem(new SpawnPipeSystem(800, cameraInformation));
         world.setSystem(new SpawnFloorSystem(cameraInformation));
         world.setSystem(new DeleteEntityOutOfLimitSystem());
 
@@ -78,25 +76,11 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.setSystem(new DebugDrawVelocitySystem(gameContainer, cameraInformation), false);
         world.setSystem(new DrawButtonSystem(gameContainer, cameraInformation), false);
 
-        Entity floor = EntityFactory.createBox(world, cameraPosition,
-                cameraPosition.getX(), cameraPosition.getY() + 30,
-                cameraInformation.screenWidth, 30, Color.orange);
-        EntityFactory.makeThatEntitySolid(floor);
-        floor.addToWorld();
-
-        Entity roof = EntityFactory.createBox(world, cameraPosition,
-                cameraPosition.getX(), cameraPosition.getY() + cameraInformation.screenHeight + 30,
-                cameraInformation.screenWidth, 30, Color.transparent);
-        EntityFactory.makeThatEntitySolid(roof);
-        roof.addToWorld();
-
-        Entity ninja = EntityFactory.createNinja(world, worldOrigin, speed, spriteGUI);
+        Entity ninja = EntityFactory.createNinja(world, worldOrigin, speed);
         ninja.addToWorld();
-        world.getSystem(CollisionSystem.class).setPlayer(ninja);
-        world.getSystem(CollisionSystem.class).addNewCollisionListener(this);
 
         if (bestTime > 0)
-            EntityFactory.createRecordBoard(world, worldOrigin, spriteGUI, bestTime);
+            EntityFactory.createRecordBoard(world, worldOrigin, bestTime);
 
         timeStart = System.currentTimeMillis();
     }
@@ -104,8 +88,6 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
     @Override
     public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics graphics) throws SlickException {
 
-        graphics.setBackground(Color.cyan);
-//        world.getSystem(DrawEntityShapeSystem.class).process();
         world.getSystem(DrawDepthImageSystem.class).process();
         world.getSystem(DrawButtonSystem.class).process();
 
