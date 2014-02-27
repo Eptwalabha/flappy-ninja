@@ -1,4 +1,4 @@
-package src.systems;
+package src.systems.collision;
 
 import com.artemis.*;
 import com.artemis.annotations.Mapper;
@@ -14,6 +14,7 @@ import java.util.List;
  * User: eptwalabha
  * Date: 20/02/14
  * Time: 14:48
+ * @deprecated
  */
 public class CheckCollisionSystem extends EntitySystem {
 
@@ -43,6 +44,14 @@ public class CheckCollisionSystem extends EntitySystem {
     @Override
     protected boolean checkProcessing() {
         return true;
+    }
+
+    @Override
+    protected void removed(Entity entity) {
+        super.removed(entity);
+
+        for (CollisionPair pair : listOfPairs)
+            pair.removed(entity);
     }
 
     public void setNewPairOfGroupCollision(ArrayList<Entity> groupA, ArrayList<Entity> groupB) {
@@ -116,6 +125,16 @@ public class CheckCollisionSystem extends EntitySystem {
             entityB.changedInWorld();
 
             nbrOfCollisionForThisPair++;
+        }
+
+        public void removed(Entity entity) {
+            removeEntityFromGroup(entity, groupA);
+            removeEntityFromGroup(entity, groupB);
+        }
+
+        private void removeEntityFromGroup(Entity entity, ArrayList<Entity> group) {
+            if (group.contains(entity))
+                group.remove(entity);
         }
     }
 }

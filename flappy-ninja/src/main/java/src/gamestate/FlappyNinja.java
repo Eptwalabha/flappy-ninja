@@ -14,6 +14,8 @@ import src.components.Velocity;
 import src.entity.EntityFactory;
 import src.entity.GuiFactory;
 import src.systems.*;
+import src.systems.collision.CheckCollisionSystem;
+import src.systems.collision.CollisionHandlerSystem;
 import src.systems.graphic.*;
 import src.systems.gui.ButtonHandler;
 import src.systems.gui.ButtonSystem;
@@ -64,7 +66,9 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.setSystem(new GravitySystem());
         world.setSystem(new VelocitySystem());
         world.setSystem(new InputSystem(gameContainer));
-        world.setSystem(new CheckCollisionSystem());
+//        world.setSystem(new CheckCollisionSystem());
+//        world.setSystem(new CollisionHandlerSystem());
+
         world.setSystem(new SpawnPipeSystem(800, cameraInformation));
         world.setSystem(new SpawnFloorSystem(cameraInformation));
         world.setSystem(new DeleteEntityOutOfLimitSystem());
