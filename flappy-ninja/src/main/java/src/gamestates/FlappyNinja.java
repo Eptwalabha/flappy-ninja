@@ -10,10 +10,13 @@ import org.newdawn.slick.state.StateBasedGame;
 import src.Constant;
 import src.components.Camera;
 import src.components.Position;
+import src.components.Score;
 import src.components.Velocity;
 import src.entities.EntityFactory;
 import src.entities.GuiFactory;
 import src.systems.*;
+import src.systems.collision.CollisionHandlerFactory;
+import src.systems.collision.CollisionPair;
 import src.systems.collision.CollisionSystem;
 import src.systems.graphic.*;
 import src.systems.gui.ButtonHandler;
@@ -35,6 +38,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
     private Position worldOrigin;
     private boolean debug = true;
     private Entity camera;
+    private Score scorePoint;
 
     @Override
     public int getID() {
@@ -64,14 +68,15 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         // ajout des systèmes.
 
         CollisionSystem collisionSystem = new CollisionSystem();
+        CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, Constant.Collision.PLAYER, Constant.Collision.POINT);
+        collisionSystem.addNewCollisionPair(collisionPlayerPoint);
+
         world.setSystem(collisionSystem);
 
         world.setSystem(new GravitySystem());
         world.setSystem(new VelocitySystem());
 
         world.setSystem(new InputSystem(gameContainer));
-//        world.setSystem(new DeprecatedCheckCollisionSystem());
-//        world.setSystem(new DeprecatedCollisionHandlerSystem());
 
         world.setSystem(new SpawnPipeSystem(800, cameraInformation));
         world.setSystem(new SpawnFloorSystem(cameraInformation));
@@ -85,6 +90,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.setSystem(new DrawButtonSystem(gameContainer, cameraInformation), false);
 
         Entity ninja = EntityFactory.createNinja(world, worldOrigin, speed);
+        scorePoint = ninja.getComponent(Score.class);
         ninja.addToWorld();
 
         if (bestTime > 0)
@@ -101,15 +107,18 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         if (gameContainer.getInput().isKeyDown(Input.KEY_TAB) || debug) {
 
-            graphics.setColor(Color.white);
-
-            long pipesCount = world.getManager(GroupManager.class).getEntities("deleteWhenOutOfScreen").size();
+            long pipesCount = scorePoint.score;
             long active = world.getEntityManager().getActiveEntityCount();
             long created = world.getEntityManager().getTotalCreated();
             long deleted = world.getEntityManager().getTotalDeleted();
             long added = world.getEntityManager().getTotalAdded();
 
-            graphics.drawString("pipes = " + pipesCount, 10, 5);
+            world.getSystem(DebugDrawVelocitySystem.class).process();
+            world.getSystem(DebugDrawEntityShapeSystem.class).process();
+
+            graphics.setColor(Color.white);
+
+            graphics.drawString("score = " + pipesCount, 10, 5);
             graphics.drawString("active  = " + active, 10, 25);
             graphics.drawString("add-del = " + (added - deleted), 10, 45);
 
@@ -117,8 +126,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
             graphics.drawString("added   = " + added, 160, 25);
             graphics.drawString("deleted = " + deleted, 160, 45);
             graphics.drawString("cre-del = " + (created - deleted), 310, 5);
-            world.getSystem(DebugDrawVelocitySystem.class).process();
-            world.getSystem(DebugDrawEntityShapeSystem.class).process();
+
         }
 
     }

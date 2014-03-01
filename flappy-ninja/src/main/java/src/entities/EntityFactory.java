@@ -28,7 +28,7 @@ public class EntityFactory {
         ninja.addComponent(new Velocity(speed, 500));
         ninja.addComponent(new EntityShape(new Circle(0f, 0f, 10f), Color.blue, 0));
         ninja.addComponent(new InputComponent());
-        ninja.addComponent(new Collide(new Circle(0, 0, 10)));
+        ninja.addComponent(new Score());
 
         world.getManager(GroupManager.class).add(ninja, Constant.Collision.PLAYER);
         return ninja;
@@ -63,8 +63,6 @@ public class EntityFactory {
         Entity upperPipe = createBox(world, origin,
                 spawnPositionX, spawnPositionY,
                 pipeWidth, 80 + spacePosition, Color.red, 4);
-
-        makeThatEntitySolid(upperPipe, new Rectangle(0, 0, pipeWidth, 80 + spacePosition));
         deleteThatEntityWhenOutOfBound(upperPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         upperPipe.addToWorld();
@@ -73,8 +71,6 @@ public class EntityFactory {
         Entity lowerPipe = createBox(world, origin,
                 spawnPositionX, spawnPositionY - (80 + spacePosition + space),
                 pipeWidth, 500 - (80 + spacePosition + space), Color.red, 4);
-
-        makeThatEntitySolid(lowerPipe, new Rectangle(0, 0, pipeWidth, 500 - (80 + spacePosition + space)));
         deleteThatEntityWhenOutOfBound(lowerPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         lowerPipe.addToWorld();
@@ -83,8 +79,6 @@ public class EntityFactory {
         Entity bottomOfLowerPipe = createBox(world, origin,
                 spawnPositionX - 4, spawnPositionY - (80 + spacePosition) + 20,
                 pipeWidth + 8, 20, Color.red, 3);
-
-        makeThatEntitySolid(bottomOfLowerPipe, new Rectangle(0, 0, pipeWidth + 8, 20));
         deleteThatEntityWhenOutOfBound(bottomOfLowerPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         bottomOfLowerPipe.addToWorld();
@@ -93,8 +87,6 @@ public class EntityFactory {
         Entity topOfBottomPipe = createBox(world, origin,
                 spawnPositionX - 4, spawnPositionY - (80 + spacePosition + space),
                 pipeWidth + 8, 20, Color.red, 3);
-
-        makeThatEntitySolid(topOfBottomPipe, new Rectangle(0, 0, pipeWidth + 8, 20));
         deleteThatEntityWhenOutOfBound(topOfBottomPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         topOfBottomPipe.addToWorld();
@@ -104,14 +96,11 @@ public class EntityFactory {
                 spawnPositionX + pipeWidth, spawnPositionY - 80 - spacePosition,
                 10, space, Color.blue, 3);
         deleteThatEntityWhenOutOfBound(triggerPoint, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
+                -100, -100, camera.screenWidth + 3 * 100, camera.screenHeight + 2 * 100);
+        triggerPoint.addComponent(new Value(1));
         triggerPoint.addToWorld();
-        groupManager.add(topOfBottomPipe, Constant.Collision.POINT);
+        groupManager.add(triggerPoint, Constant.Collision.POINT);
 
-    }
-
-    public static void makeThatEntitySolid(Entity entity, Shape shape) {
-        entity.addComponent(new Collide(shape));
     }
 
     public static void createRecordBoard(World world, Position origin, float time) {
@@ -153,12 +142,10 @@ public class EntityFactory {
     private static void createFloorTile(World world, Camera camera, float tileWidth, int tileIndex, int alreadySpawned) {
         Entity floorTile = createBox(world, camera.cameraPosition.origin, tileIndex * tileWidth + alreadySpawned * tileWidth, camera.cameraPosition.origin.getY() + 2 * tileWidth / 3f, tileWidth, 50, Color.orange, 1);
         float cameraMargin = 2 * tileWidth;
-        makeThatEntitySolid(floorTile, new Rectangle(0, 0, tileWidth, tileWidth));
         deleteThatEntityWhenOutOfBound(floorTile, camera.cameraPosition,
                 -cameraMargin, -cameraMargin,
                 2 * cameraMargin + camera.screenWidth, 2 * cameraMargin + camera.screenHeight);
         floorTile.addToWorld();
-        world.getManager(GroupManager.class).add(floorTile, Constant.Collision.ENVIRONMENT);
     }
 
     private static void deleteThatEntityWhenOutOfBound(Entity entity, Position origin, float offsetX, float offsetY, float width, float height) {

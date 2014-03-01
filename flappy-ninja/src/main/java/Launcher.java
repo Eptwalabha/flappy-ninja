@@ -38,7 +38,7 @@ public class Launcher extends StateBasedGame {
 
         if (gameContainer instanceof AppGameContainer)
             this.container = (AppGameContainer) gameContainer;
-        container.setShowFPS(true);
+        container.setShowFPS(false);
 //        container.setTargetFrameRate(60);
         this.addState(new FlappyNinja());
         this.addState(new Pause());

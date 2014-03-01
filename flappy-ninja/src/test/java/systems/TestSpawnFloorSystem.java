@@ -80,7 +80,6 @@ public class TestSpawnFloorSystem {
         assertThat(positionOfTile.getY()).isEqualTo(cameraInformation.cameraPosition.getY() + 2 * spawnFloorSystem.getTileWidth() / 3);
 
         assertThat(lastAddedTile.getComponent(EntityShape.class)).isNotNull();
-        assertThat(lastAddedTile.getComponent(Collide.class)).isNotNull();
         assertThat(lastAddedTile.getComponent(Limit.class)).isNotNull();
         assertThat(lastAddedTile.getComponent(Limit.class).origin).isEqualTo(cameraInformation.cameraPosition);
 
