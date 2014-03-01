@@ -2,13 +2,17 @@ package systems;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.World;
+import com.artemis.annotations.Mapper;
+import com.artemis.managers.GroupManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
 import src.components.*;
-import src.systems.collision.CheckCollisionSystem;import src.systems.collision.CollisionHandlerSystem;
+import src.systems.collision.deprecated.DeprecatedCheckCollisionSystem;import src.systems.collision.deprecated.DeprecatedCollisionHandlerSystem;
 
 import java.util.ArrayList;
 
@@ -17,23 +21,24 @@ import java.util.ArrayList;
  * Date: 26/02/14
  * Time: 23:29
  */
-public class TestCollisionSystem {
+public class DeprecatedTestCollisionSystem {
 
     private World world;
-    private CheckCollisionSystem checkCollisionSystem;
-    private MockCollisionHandlerSystem collisionHandler;
+    private DeprecatedCheckCollisionSystem deprecatedCheckCollisionSystem;
+    private MockDeprecatedCollisionHandlerSystem collisionHandler;
 
     @Before
     public void setUp() {
         world = new World();
         world.initialize();
-        checkCollisionSystem = new CheckCollisionSystem();
+        world.setManager(new GroupManager());
+        deprecatedCheckCollisionSystem = new DeprecatedCheckCollisionSystem();
     }
 
     @Test
     public void canCreateACollisionCheckerSystemThatAcceptOnlyValidEntities() {
 
-        world.setSystem(checkCollisionSystem);
+        world.setSystem(deprecatedCheckCollisionSystem);
 
         Entity entityA = getValidEntityForCollisionSystem(0, 0, 10, 10);
         Entity entityB = world.createEntity();
@@ -42,21 +47,21 @@ public class TestCollisionSystem {
         world.process();
 
         assertThat(entityA.getComponent(Collide.class).shape).isNotNull();
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(0);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(0);
 
         entityA.addToWorld();
         entityB.addToWorld();
 
         world.process();
-        // entity B doesn't have a Position component
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(1);
+        // entities B doesn't have a Position component
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(1);
 
     }
 
     @Test
     public void canCreateAPairOfCollision() {
 
-        world.setSystem(checkCollisionSystem);
+        world.setSystem(deprecatedCheckCollisionSystem);
 
         ArrayList<Entity> groupA = new ArrayList<Entity>();
         ArrayList<Entity> groupB = new ArrayList<Entity>();
@@ -70,15 +75,15 @@ public class TestCollisionSystem {
         entityB2.addToWorld();
         entityB3.addToWorld();
 
-        assertThat(checkCollisionSystem.getNumberOfCollisionPair()).isEqualTo(0);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisionPair()).isEqualTo(0);
 
-        checkCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
-        assertThat(checkCollisionSystem.getNumberOfCollisionPair()).isEqualTo(1);
+        deprecatedCheckCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisionPair()).isEqualTo(1);
 
-        checkCollisionSystem.removeAllPairOfCollision();
-        assertThat(checkCollisionSystem.getNumberOfCollisionPair()).isEqualTo(0);
+        deprecatedCheckCollisionSystem.removeAllPairOfCollision();
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisionPair()).isEqualTo(0);
 
-        checkCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
+        deprecatedCheckCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
 
         groupA.add(entityA1);
         groupB.add(entityB1);
@@ -87,9 +92,9 @@ public class TestCollisionSystem {
 
         world.process();
 
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(4);
-        assertThat(checkCollisionSystem.getNumberOfCollisions()).isEqualTo(0);
-        assertThat(checkCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(0);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(4);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisions()).isEqualTo(0);
+        assertThat(deprecatedCheckCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(0);
 
         Collide collideEntityA1 = entityA1.getComponent(Collide.class);
         collideEntityA1.shape.setLocation(50, 50);
@@ -97,15 +102,15 @@ public class TestCollisionSystem {
         world.process();
 
         // entityA1 collides with entityB1
-        assertThat(checkCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
-        assertThat(checkCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(1);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
+        assertThat(deprecatedCheckCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(1);
         assertThat(entityA1.getComponent(Collision.class)).isNotNull();
         assertThat(entityA1.getComponent(Collision.class).collidingEntity).isEqualTo(entityB1);
         assertThat(entityB1.getComponent(Collision.class).collidingEntity).isEqualTo(entityA1);
 
         world.process();
-        assertThat(checkCollisionSystem.getNumberOfCollisions()).isEqualTo(0);
-        assertThat(checkCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(1);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisions()).isEqualTo(0);
+        assertThat(deprecatedCheckCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(1);
 
         // clear the collision component of entityA1
         entityA1.removeComponent(Collision.class);
@@ -113,8 +118,8 @@ public class TestCollisionSystem {
         collideEntityA1.shape.setLocation(140, 50);
 
         world.process();
-        assertThat(checkCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
-        assertThat(checkCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(2);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
+        assertThat(deprecatedCheckCollisionSystem.getTotalNumberOfCollisions()).isEqualTo(2);
         assertThat(entityA1.getComponent(Collision.class).collidingEntity).isEqualTo(entityB2);
         assertThat(entityB1.getComponent(Collision.class).collidingEntity).isEqualTo(entityA1);
         assertThat(entityB2.getComponent(Collision.class).collidingEntity).isEqualTo(entityA1);
@@ -122,38 +127,38 @@ public class TestCollisionSystem {
         entityB3.disable();
         entityB3.deleteFromWorld();
 
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(3);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(3);
         assertThat(groupB.size()).isEqualTo(2);
     }
 
     @Test
     public void canUpdateGroupsWhenAnEntityIsRemovedFromWorld() {
 
-        world.setSystem(checkCollisionSystem);
+        world.setSystem(deprecatedCheckCollisionSystem);
 
         ArrayList<Entity> groupA = generateGroupOfEntitiesForCollision(5);
         ArrayList<Entity> groupB = generateGroupOfEntitiesForCollision(4);
 
-        checkCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
+        deprecatedCheckCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
 
         world.process();
         assertThat(groupA.size()).isEqualTo(5);
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(5 + 4);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(5 + 4);
 
         Entity entity = groupA.get(0);
         entity.deleteFromWorld();
 
         world.process();
         assertThat(groupA.size()).isEqualTo(5 - 1);
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(5 + 4 - 1);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(5 + 4 - 1);
 
     }
 
     @Test
     public void canManageAnEntityThatHasCollisionComponent() {
 
-        world.setSystem(checkCollisionSystem);
-        collisionHandler = new MockCollisionHandlerSystem();
+        world.setSystem(deprecatedCheckCollisionSystem);
+        collisionHandler = new MockDeprecatedCollisionHandlerSystem();
         world.setSystem(collisionHandler, false);
 
         Entity entityA = getValidEntityForCollisionSystem(0, 0, 10, 10);
@@ -167,10 +172,10 @@ public class TestCollisionSystem {
         ArrayList<Entity> groupB = new ArrayList<Entity>();
         groupB.add(entityB);
 
-        checkCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
+        deprecatedCheckCollisionSystem.setNewPairOfGroupCollision(groupA, groupB);
 
         world.process();
-        assertThat(checkCollisionSystem.getActives().size()).isEqualTo(2);
+        assertThat(deprecatedCheckCollisionSystem.getActives().size()).isEqualTo(2);
         assertThat(collisionHandler.getActives().size()).isEqualTo(0);
         assertThat(collisionHandler.insertedEntity).isEqualTo(0);
 
@@ -178,7 +183,7 @@ public class TestCollisionSystem {
 
         world.process();
 
-        assertThat(checkCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
+        assertThat(deprecatedCheckCollisionSystem.getNumberOfCollisions()).isEqualTo(1);
         assertThat(collisionHandler.insertedEntity).isEqualTo(2);
 
         collisionHandler.process();
@@ -206,8 +211,16 @@ public class TestCollisionSystem {
         return group;
     }
 
-    public class MockCollisionHandlerSystem extends CollisionHandlerSystem {
+    public class MockDeprecatedCollisionHandlerSystem extends DeprecatedCollisionHandlerSystem {
 
+        @Mapper
+        ComponentMapper<Collision> collisionComponentMapper;
+        @Mapper
+        ComponentMapper<Velocity> velocityComponentMapper;
+        @Mapper
+        ComponentMapper<Position> positionComponentMapper;
+        @Mapper
+        ComponentMapper<Collide> collideComponentMapper;
         public int insertedEntity = 0;
 
         @Override
@@ -215,6 +228,24 @@ public class TestCollisionSystem {
             super.inserted(entity);
             insertedEntity++;
 
+        }
+
+        @Override
+        protected void process(Entity entityA) {
+
+            Collision collision = collisionComponentMapper.get(entityA);
+            Shape shapeA = collideComponentMapper.get(entityA).shape;
+            Velocity velocity = velocityComponentMapper.getSafe(entityA);
+            Position positionEntityA = positionComponentMapper.getSafe(entityA);
+
+            Entity entityB = collision.collidingEntity;
+            Position positionEntityB = positionComponentMapper.getSafe(entityB);
+            Shape shapeB = collideComponentMapper.getSafe(entityB).shape;
+
+            super.manageVelocity(velocity, positionEntityA, positionEntityB, shapeA, shapeB);
+
+            entityA.removeComponent(Collision.class);
+            entityA.changedInWorld();
         }
     }
 

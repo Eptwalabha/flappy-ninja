@@ -1,4 +1,4 @@
-package src.systems.collision;
+package src.systems.collision.deprecated;
 
 import com.artemis.*;
 import com.artemis.annotations.Mapper;
@@ -16,17 +16,17 @@ import java.util.List;
  * Time: 14:48
  * @deprecated
  */
-public class CheckCollisionSystem extends EntitySystem {
+public class DeprecatedCheckCollisionSystem extends EntitySystem {
 
     @Mapper
     ComponentMapper<Collide> collideComponentMapper;
-    private List<CollisionPair> listOfPairs;
+    private List<DeprecatedCollisionPair> listOfPairs;
     private int numberOfCollision;
     private int totalOfCollision;
 
-    public CheckCollisionSystem() {
+    public DeprecatedCheckCollisionSystem() {
         super(Aspect.getAspectForAll(Collide.class, Position.class));
-        listOfPairs = new ArrayList<CollisionPair>();
+        listOfPairs = new ArrayList<DeprecatedCollisionPair>();
         totalOfCollision = 0;
     }
 
@@ -34,7 +34,7 @@ public class CheckCollisionSystem extends EntitySystem {
     protected void processEntities(ImmutableBag<Entity> entities) {
         numberOfCollision = 0;
 
-        for (CollisionPair pair : listOfPairs) {
+        for (DeprecatedCollisionPair pair : listOfPairs) {
             pair.processCollision();
             numberOfCollision += pair.getNbrOfCollisionForThisPair();
         }
@@ -50,12 +50,12 @@ public class CheckCollisionSystem extends EntitySystem {
     protected void removed(Entity entity) {
         super.removed(entity);
 
-        for (CollisionPair pair : listOfPairs)
+        for (DeprecatedCollisionPair pair : listOfPairs)
             pair.removed(entity);
     }
 
     public void setNewPairOfGroupCollision(ArrayList<Entity> groupA, ArrayList<Entity> groupB) {
-        listOfPairs.add(new CollisionPair(groupA, groupB));
+        listOfPairs.add(new DeprecatedCollisionPair(groupA, groupB));
     }
 
     public int getNumberOfCollisionPair() {
@@ -63,7 +63,7 @@ public class CheckCollisionSystem extends EntitySystem {
     }
 
     public void removeAllPairOfCollision() {
-        listOfPairs = new ArrayList<CollisionPair>();
+        listOfPairs = new ArrayList<DeprecatedCollisionPair>();
     }
 
     public int getNumberOfCollisions() {
@@ -74,13 +74,13 @@ public class CheckCollisionSystem extends EntitySystem {
         return totalOfCollision;
     }
 
-    public class CollisionPair {
+    public class DeprecatedCollisionPair {
 
         public ArrayList<Entity> groupA;
         public ArrayList<Entity> groupB;
         private int nbrOfCollisionForThisPair;
 
-        public CollisionPair(ArrayList<Entity> groupA, ArrayList<Entity> groupB) {
+        public DeprecatedCollisionPair(ArrayList<Entity> groupA, ArrayList<Entity> groupB) {
             this.groupA = groupA;
             this.groupB = groupB;
         }

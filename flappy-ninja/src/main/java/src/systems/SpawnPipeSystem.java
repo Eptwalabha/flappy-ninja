@@ -5,8 +5,7 @@ import com.artemis.Entity;
 import com.artemis.systems.IntervalEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import src.components.Camera;
-import src.entity.EntityFactory;
-import src.utils.SpriteGUI;
+import src.entities.EntityFactory;
 
 /**
  * User: eptwalabha

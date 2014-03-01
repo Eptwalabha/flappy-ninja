@@ -1,4 +1,4 @@
-package src.systems.collision;
+package src.systems.collision.deprecated;
 
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
@@ -17,7 +17,7 @@ import src.components.Velocity;
  * Time: 22:18
  * @deprecated
  */
-public class CollisionHandlerSystem extends EntityProcessingSystem {
+public class DeprecatedCollisionHandlerSystem extends EntityProcessingSystem {
 
     @Mapper
     ComponentMapper<Collision> collisionComponentMapper;
@@ -28,7 +28,7 @@ public class CollisionHandlerSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Collide> collideComponentMapper;
 
-    public CollisionHandlerSystem() {
+    public DeprecatedCollisionHandlerSystem() {
         super(Aspect.getAspectForAll(Collision.class, Collide.class));
     }
 
@@ -50,7 +50,7 @@ public class CollisionHandlerSystem extends EntityProcessingSystem {
         entityA.changedInWorld();
     }
 
-    private void manageVelocity(Velocity velocity, Position positionEntityA, Position positionEntityB, Shape shapeA, Shape shapeB) {
+    protected void manageVelocity(Velocity velocity, Position positionEntityA, Position positionEntityB, Shape shapeA, Shape shapeB) {
         if (velocity == null || shapeB == null || positionEntityA == null || positionEntityB == null)
             return;
 

@@ -1,11 +1,13 @@
-package src.entity;
+package src.entities;
 
 import com.artemis.Entity;
 import com.artemis.World;
+import com.artemis.managers.GroupManager;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
+import src.Constant;
 import src.components.*;
 import src.components.Camera;
 
@@ -26,7 +28,9 @@ public class EntityFactory {
         ninja.addComponent(new Velocity(speed, 500));
         ninja.addComponent(new EntityShape(new Circle(0f, 0f, 10f), Color.blue, 0));
         ninja.addComponent(new InputComponent());
+        ninja.addComponent(new Collide(new Circle(0, 0, 10)));
 
+        world.getManager(GroupManager.class).add(ninja, Constant.Collision.PLAYER);
         return ninja;
     }
 
@@ -42,6 +46,7 @@ public class EntityFactory {
 
     public static void createPipe(World world, Camera camera, float space) {
 
+        GroupManager groupManager = world.getManager(GroupManager.class);
         space = (space > 300) ? 300 : space;
         space = (space < 75) ? 75 : space;
         float spacePosition = (float) Math.random() * (camera.screenHeight - 2 * 80 - space);
@@ -63,6 +68,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(upperPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         upperPipe.addToWorld();
+        groupManager.add(upperPipe, Constant.Collision.ENVIRONMENT);
 
         Entity lowerPipe = createBox(world, origin,
                 spawnPositionX, spawnPositionY - (80 + spacePosition + space),
@@ -72,6 +78,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(lowerPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         lowerPipe.addToWorld();
+        groupManager.add(lowerPipe, Constant.Collision.ENVIRONMENT);
 
         Entity bottomOfLowerPipe = createBox(world, origin,
                 spawnPositionX - 4, spawnPositionY - (80 + spacePosition) + 20,
@@ -81,6 +88,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(bottomOfLowerPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         bottomOfLowerPipe.addToWorld();
+        groupManager.add(bottomOfLowerPipe, Constant.Collision.ENVIRONMENT);
 
         Entity topOfBottomPipe = createBox(world, origin,
                 spawnPositionX - 4, spawnPositionY - (80 + spacePosition + space),
@@ -90,6 +98,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(topOfBottomPipe, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         topOfBottomPipe.addToWorld();
+        groupManager.add(topOfBottomPipe, Constant.Collision.ENVIRONMENT);
 
         Entity triggerPoint = createBox(world, origin,
                 spawnPositionX + pipeWidth, spawnPositionY - 80 - spacePosition,
@@ -97,6 +106,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(triggerPoint, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         triggerPoint.addToWorld();
+        groupManager.add(topOfBottomPipe, Constant.Collision.POINT);
 
     }
 
@@ -148,6 +158,7 @@ public class EntityFactory {
                 -cameraMargin, -cameraMargin,
                 2 * cameraMargin + camera.screenWidth, 2 * cameraMargin + camera.screenHeight);
         floorTile.addToWorld();
+        world.getManager(GroupManager.class).add(floorTile, Constant.Collision.ENVIRONMENT);
     }
 
     private static void deleteThatEntityWhenOutOfBound(Entity entity, Position origin, float offsetX, float offsetY, float width, float height) {

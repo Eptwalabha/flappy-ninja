@@ -18,4 +18,10 @@ public class Constant {
         public static final int FLOOR = 2;
 
     }
+
+    public class Collision {
+        public static final String PLAYER = "collision_player";
+        public static final String ENVIRONMENT = "collision_environment";
+        public static final String POINT = "collision_point";
+    }
 }

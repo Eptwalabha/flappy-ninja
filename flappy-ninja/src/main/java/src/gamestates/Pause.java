@@ -1,4 +1,4 @@
-package src.gamestate;
+package src.gamestates;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;

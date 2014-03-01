@@ -4,11 +4,12 @@ package systems;
 import com.artemis.Entity;
 import com.artemis.EntityManager;
 import com.artemis.World;
+import com.artemis.managers.GroupManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.newdawn.slick.SlickException;
 import src.components.*;
-import src.entity.EntityFactory;import src.systems.SpawnFloorSystem;
+import src.entities.EntityFactory;import src.systems.SpawnFloorSystem;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -31,6 +32,7 @@ public class TestSpawnFloorSystem {
         mockEntityManager = new MockEntityManager();
 
         world.setManager(mockEntityManager);
+        world.setManager(new GroupManager());
         world.initialize();
 
         camera = EntityFactory.createCamera(world, new Position(0, 0), 600, 20);

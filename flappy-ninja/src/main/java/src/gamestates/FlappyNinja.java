@@ -1,4 +1,4 @@
-package src.gamestate;
+package src.gamestates;
 
 import com.artemis.ComponentType;
 import com.artemis.Entity;
@@ -11,15 +11,14 @@ import src.Constant;
 import src.components.Camera;
 import src.components.Position;
 import src.components.Velocity;
-import src.entity.EntityFactory;
-import src.entity.GuiFactory;
+import src.entities.EntityFactory;
+import src.entities.GuiFactory;
 import src.systems.*;
-import src.systems.collision.CheckCollisionSystem;
-import src.systems.collision.CollisionHandlerSystem;
+import src.systems.collision.CollisionSystem;
 import src.systems.graphic.*;
 import src.systems.gui.ButtonHandler;
 import src.systems.gui.ButtonSystem;
-import src.systems.interfaces.CollisionListener;
+import src.systems.collision.CollisionListener;
 
 /**
  * User: Eptwalabha
@@ -63,11 +62,16 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         camera.addToWorld();
 
         // ajout des systèmes.
+
+        CollisionSystem collisionSystem = new CollisionSystem();
+        world.setSystem(collisionSystem);
+
         world.setSystem(new GravitySystem());
         world.setSystem(new VelocitySystem());
+
         world.setSystem(new InputSystem(gameContainer));
-//        world.setSystem(new CheckCollisionSystem());
-//        world.setSystem(new CollisionHandlerSystem());
+//        world.setSystem(new DeprecatedCheckCollisionSystem());
+//        world.setSystem(new DeprecatedCollisionHandlerSystem());
 
         world.setSystem(new SpawnPipeSystem(800, cameraInformation));
         world.setSystem(new SpawnFloorSystem(cameraInformation));
@@ -97,7 +101,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         if (gameContainer.getInput().isKeyDown(Input.KEY_TAB) || debug) {
 
-            graphics.setColor(Color.black);
+            graphics.setColor(Color.white);
 
             long pipesCount = world.getManager(GroupManager.class).getEntities("deleteWhenOutOfScreen").size();
             long active = world.getEntityManager().getActiveEntityCount();
@@ -130,10 +134,10 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
     }
 
     @Override
-    public void hasCollide(Entity entity) {
+    public void hasCollide(Entity entityA, Entity entityB) {
 
         world.getSystem(SpawnPipeSystem.class).setEnabled(false);
-        Position position = entity.getComponent(Position.class);
+        Position position = entityA.getComponent(Position.class);
         Velocity velocityCamera = camera.getComponent(Velocity.class);
         velocityCamera.x = 0;
         velocityCamera.y = 0;

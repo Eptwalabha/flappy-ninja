@@ -1,4 +1,4 @@
-package src.entity;
+package src.entities;
 
 import com.artemis.Entity;
 import com.artemis.World;

@@ -1,4 +1,4 @@
-package src.systems.interfaces;
+package src.systems.collision;
 
 import com.artemis.Entity;
 
@@ -9,5 +9,5 @@ import com.artemis.Entity;
  */
 public interface CollisionListener {
 
-    public void hasCollide(Entity entity);
+    public void hasCollide(Entity entityA, Entity entityB);
 }

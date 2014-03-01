@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import src.components.Camera;
 import src.components.Position;
-import src.entity.EntityFactory;
+import src.entities.EntityFactory;
 
 import static org.fest.assertions.Assertions.assertThat;
 
