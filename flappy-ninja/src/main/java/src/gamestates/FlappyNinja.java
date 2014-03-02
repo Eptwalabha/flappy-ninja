@@ -35,8 +35,6 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
     public float bestTime = 0;
     public long bestScore = 0;
     private StateBasedGame parent;
-    private Position worldOrigin;
-    private boolean debug = true;
     private Entity camera;
     private Score scorePoint;
 
@@ -49,7 +47,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
     public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
 
         // l'origine du jeu toutes les autres positions l'ont en référence
-        worldOrigin = new Position(0, 0);
+        Position worldOrigin = new Position(0, 0);
         float speed = 300;
 
 //        SpriteGUI spriteGUI = new SpriteGUI("images/all_tiles.png", 12, 1);
@@ -61,12 +59,11 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         camera = EntityFactory.createCamera(world, worldOrigin, gameContainer.getWidth(), gameContainer.getHeight());
         camera.addComponent(new Velocity(speed, 0));
-        Position cameraPosition = (Position) camera.getComponent(ComponentType.getTypeFor(Position.class));
+//        Position cameraPosition = (Position) camera.getComponent(ComponentType.getTypeFor(Position.class));
         Camera cameraInformation = (Camera) camera.getComponent(ComponentType.getTypeFor(Camera.class));
         camera.addToWorld();
 
         // ajout des systèmes.
-
         CollisionSystem collisionSystem = new CollisionSystem();
         CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, Constant.Collision.PLAYER, Constant.Collision.POINT);
         collisionSystem.addNewCollisionPair(collisionPlayerPoint);
@@ -83,11 +80,10 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.setSystem(new DeleteEntityOutOfLimitSystem());
 
         world.setSystem(new DrawDepthImageSystem(cameraInformation), false);
-        world.setSystem(new ButtonSystem(gameContainer, cameraInformation));
-        world.setSystem(new DrawEntityShapeSystem(gameContainer, cameraInformation), false);
+        world.setSystem(new ButtonSystem(gameContainer));
         world.setSystem(new DebugDrawEntityShapeSystem(gameContainer, cameraInformation), false);
         world.setSystem(new DebugDrawVelocitySystem(gameContainer, cameraInformation), false);
-        world.setSystem(new DrawButtonSystem(gameContainer, cameraInformation), false);
+        world.setSystem(new DrawButtonSystem(gameContainer), false);
 
         Entity ninja = EntityFactory.createNinja(world, worldOrigin, speed);
         scorePoint = ninja.getComponent(Score.class);
@@ -105,29 +101,25 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.getSystem(DrawDepthImageSystem.class).process();
         world.getSystem(DrawButtonSystem.class).process();
 
-        if (gameContainer.getInput().isKeyDown(Input.KEY_TAB) || debug) {
+        long pipesCount = scorePoint.score;
+        long active = world.getEntityManager().getActiveEntityCount();
+        long created = world.getEntityManager().getTotalCreated();
+        long deleted = world.getEntityManager().getTotalDeleted();
+        long added = world.getEntityManager().getTotalAdded();
 
-            long pipesCount = scorePoint.score;
-            long active = world.getEntityManager().getActiveEntityCount();
-            long created = world.getEntityManager().getTotalCreated();
-            long deleted = world.getEntityManager().getTotalDeleted();
-            long added = world.getEntityManager().getTotalAdded();
+        world.getSystem(DebugDrawEntityShapeSystem.class).process();
+        world.getSystem(DebugDrawVelocitySystem.class).process();
 
-            world.getSystem(DebugDrawVelocitySystem.class).process();
-            world.getSystem(DebugDrawEntityShapeSystem.class).process();
+        graphics.setColor(Color.white);
 
-            graphics.setColor(Color.white);
+        graphics.drawString("score = " + pipesCount, 10, 5);
+        graphics.drawString("active  = " + active, 10, 25);
+        graphics.drawString("add-del = " + (added - deleted), 10, 45);
 
-            graphics.drawString("score = " + pipesCount, 10, 5);
-            graphics.drawString("active  = " + active, 10, 25);
-            graphics.drawString("add-del = " + (added - deleted), 10, 45);
-
-            graphics.drawString("created = " + created, 160, 5);
-            graphics.drawString("added   = " + added, 160, 25);
-            graphics.drawString("deleted = " + deleted, 160, 45);
-            graphics.drawString("cre-del = " + (created - deleted), 310, 5);
-
-        }
+        graphics.drawString("created = " + created, 160, 5);
+        graphics.drawString("added   = " + added, 160, 25);
+        graphics.drawString("deleted = " + deleted, 160, 45);
+        graphics.drawString("cre-del = " + (created - deleted), 310, 5);
 
     }
 

@@ -7,15 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Circle;
-import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
-import src.components.EntityShape;
-import src.components.Position;
-import src.components.Score;
-import src.components.Value;
+import src.components.*;
 import src.entities.EntityFactory;
 import src.systems.collision.*;
-import src.systems.collision.handlers.PointEarning;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -52,8 +47,10 @@ public class TestPointEarningCollisionHandler {
         addEntityToGroup(player, groupA);
         Entity point1 = createAPoint(origin, 100, 0, 10, 1);
         Entity point2 = createAPoint(origin, 0, 100, 10, 2);
+        Entity point3 = createAPoint(origin, 100, 100, 10, 1);
         addEntityToGroup(point1, groupB);
         addEntityToGroup(point2, groupB);
+        addEntityToGroup(point3, groupB);
 
         Shape playerShape = player.getComponent(EntityShape.class).shape;
         Score score = player.getComponent(Score.class);
@@ -74,6 +71,11 @@ public class TestPointEarningCollisionHandler {
         world.process();
         assertThat(score.score).isEqualTo(1 + 2);
 
+        player.addComponent(new Death());
+        playerShape.setLocation(100, 100);
+
+        world.process();
+        assertThat(score.score).isEqualTo(1 + 2);
     }
 
     @Test
@@ -109,7 +111,7 @@ public class TestPointEarningCollisionHandler {
 
         Entity point = world.createEntity();
         point.addComponent(new Position(positionX, positionY, origin));
-        point.addComponent(new EntityShape(new Circle(positionX, positionY, radius), Color.green, 0));
+        point.addComponent(new EntityShape(new Circle(positionX, positionY, radius)));
         point.addComponent(new Value(value));
         point.addToWorld();
         return point;
@@ -117,14 +119,5 @@ public class TestPointEarningCollisionHandler {
 
     private void addEntityToGroup(Entity entity, String groupName) {
         groupManager.add(entity, groupName);
-    }
-
-    private class MockCollisionListener implements CollisionListener {
-
-
-        @Override
-        public void hasCollide(Entity entityA, Entity entityB) {
-            //To change body of implemented methods use File | Settings | File Templates.
-        }
     }
 }

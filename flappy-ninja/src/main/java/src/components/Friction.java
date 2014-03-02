@@ -9,9 +9,9 @@ import com.artemis.Component;
  */
 public class Friction extends Component {
 
-    public float restituctionRatio;
+    public float restitutionRatio;
 
-    public Friction(float restituctionRatio) {
-        this.restituctionRatio = restituctionRatio;
+    public Friction(float restitutionRatio) {
+        this.restitutionRatio = restitutionRatio;
     }
 }

@@ -23,12 +23,9 @@ public class DrawButtonSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Button> buttonComponentMapper;
 
-    private Camera camera;
-
-    public DrawButtonSystem(GameContainer gameContainer, Camera camera) {
+    public DrawButtonSystem(GameContainer gameContainer) {
         super(Aspect.getAspectForAll(Button.class));
         this.graphics = gameContainer.getGraphics();
-        this.camera = camera;
     }
 
     @Override

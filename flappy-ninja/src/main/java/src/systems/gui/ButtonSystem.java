@@ -20,14 +20,11 @@ public class ButtonSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Button> buttonComponentMapper;
 
-    private Camera camera;
-
     private Input input;
 
-    public ButtonSystem(GameContainer gameContainer, Camera camera) {
+    public ButtonSystem(GameContainer gameContainer) {
         super(Aspect.getAspectForAll(Button.class));
         input = gameContainer.getInput();
-        this.camera = camera;
     }
 
     @Override
@@ -41,6 +38,5 @@ public class ButtonSystem extends EntityProcessingSystem {
                     && mouseY >= button.position.y && mouseY <= button.position.y + button.height)
                 button.buttonHandler.pressed();
         }
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

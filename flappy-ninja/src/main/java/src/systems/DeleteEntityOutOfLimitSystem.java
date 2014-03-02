@@ -7,6 +7,7 @@ import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import src.components.Limit;
 import src.components.Position;
+import src.components.ToDelete;
 
 /**
  * User: eptwalabha
@@ -21,7 +22,7 @@ public class DeleteEntityOutOfLimitSystem extends EntityProcessingSystem {
     ComponentMapper<Limit> limitComponentMapper;
 
     public DeleteEntityOutOfLimitSystem() {
-        super (Aspect.getAspectForAll(Position.class, Limit.class));
+        super (Aspect.getAspectForAll(Position.class, Limit.class).exclude(ToDelete.class));
     }
 
     @Override
@@ -31,9 +32,8 @@ public class DeleteEntityOutOfLimitSystem extends EntityProcessingSystem {
         Limit limit = limitComponentMapper.get(entity);
 
         if (!limit.isPositionInsideLimit(position)) {
-            entity.disable();
-            entity.deleteFromWorld();
+            entity.addComponent(new ToDelete());
+            entity.changedInWorld();
         }
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

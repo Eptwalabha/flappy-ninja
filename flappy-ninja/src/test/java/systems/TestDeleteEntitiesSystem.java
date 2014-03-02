@@ -1,11 +1,15 @@
 package systems;
 
 import com.artemis.Entity;
+import com.artemis.EntityManager;
 import com.artemis.World;
+import org.junit.Before;
 import org.junit.Test;
 import src.components.Limit;
 import src.components.Position;
+import src.components.ToDelete;
 import src.systems.DeleteEntityOutOfLimitSystem;
+import src.systems.DeleteEntitySystem;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -14,7 +18,50 @@ import static org.fest.assertions.Assertions.assertThat;
  * Date: 22/02/14
  * Time: 11:58
  */
-public class TestDeleteEntitiesOutOfScreenSystem {
+public class TestDeleteEntitiesSystem {
+
+
+    private World world;
+    private DeleteEntitySystem deleteSystem;
+    private DeleteEntityOutOfLimitSystem deleteEntityOutOfLimitSystem;
+
+    @Before
+    public void setUp() {
+        world = new World();
+        world.initialize();
+
+        deleteSystem = new DeleteEntitySystem();
+        deleteEntityOutOfLimitSystem = new DeleteEntityOutOfLimitSystem();
+
+        world.setSystem(deleteSystem, false);
+        world.setSystem(deleteEntityOutOfLimitSystem, false);
+    }
+
+    @Test
+    public void canDeleteEntity() {
+
+        Entity entityA = addANewEntityInOurWorld();
+
+        world.process();
+        assertThat(world.getEntityManager().getActiveEntityCount()).isEqualTo(1);
+        assertThat(deleteSystem.getActives().size()).isEqualTo(0);
+
+        entityA.addComponent(new ToDelete());
+        entityA.changedInWorld();
+        assertThat(deleteSystem.getActives().size()).isEqualTo(1);
+
+        deleteSystem.process();
+
+        assertThat(world.getEntityManager().getActiveEntityCount()).isEqualTo(0);
+        assertThat(deleteSystem.getActives().size()).isEqualTo(0);
+
+    }
+
+    private Entity addANewEntityInOurWorld() {
+        Entity entityA = world.createEntity();
+        entityA.addToWorld();
+        return entityA;
+    }
 
     @Test
     public void canDefineALimit() {
@@ -55,30 +102,35 @@ public class TestDeleteEntitiesOutOfScreenSystem {
     @Test
     public void canDeleteAnEntityWithLimit() {
 
-        World world = new World();
-        world.initialize();
-
-        DeleteEntityOutOfLimitSystem deleteEntityOutOfLimitSystem = new DeleteEntityOutOfLimitSystem();
         assertThat(deleteEntityOutOfLimitSystem.getActives().size()).isEqualTo(0);
+        assertThat(deleteSystem.getActives().size()).isEqualTo(0);
 
-        world.setSystem(deleteEntityOutOfLimitSystem);
-
-        Entity entity = world.createEntity();
+        Entity entity = addANewEntityInOurWorld();
         Position position = new Position(500, 500);
         Limit limit = new Limit(-100, -100, 700, 700);
 
         entity.addComponent(position);
         entity.addComponent(limit);
-        entity.addToWorld();
+        entity.changedInWorld();
 
         world.process();
+
         assertThat(deleteEntityOutOfLimitSystem.getActives().size()).isEqualTo(1);
+        assertThat(deleteSystem.getActives().size()).isEqualTo(0);
+        assertThat(entity.getComponent(ToDelete.class)).isNull();
 
         position.x = -200;
-        world.process();
+        deleteEntityOutOfLimitSystem.process();
+
+        assertThat(deleteEntityOutOfLimitSystem.getActives().size()).isEqualTo(0);
+        assertThat(deleteSystem.getActives().size()).isEqualTo(1);
+        assertThat(world.getEntityManager().isActive(entity.getId())).isTrue();
+        assertThat(entity.getComponent(ToDelete.class)).isNotNull();
+
+        deleteSystem.process();
+        assertThat(deleteSystem.getActives().size()).isEqualTo(0);
         assertThat(deleteEntityOutOfLimitSystem.getActives().size()).isEqualTo(0);
     }
-
 
 
 }

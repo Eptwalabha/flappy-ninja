@@ -12,32 +12,11 @@ import java.util.List;
  * Date: 01/03/14
  * Time: 15:10
  */
-public class BasicCollisionHandler implements CollisionHandler {
-
-    private List<CollisionListener> collisionListeners;
-
-    public BasicCollisionHandler() {
-        collisionListeners = new ArrayList<CollisionListener>();
-    }
+public class BasicCollisionHandler extends CollisionHandler {
 
     @Override
     public void collide(Entity entityA, Entity entityB) {
         for (CollisionListener collisionListener : collisionListeners)
             collisionListener.hasCollide(entityA, entityB);
-    }
-
-    @Override
-    public void clearAllCollisionListener() {
-        collisionListeners = new ArrayList<CollisionListener>();
-    }
-
-    @Override
-    public boolean addCollisionListener(CollisionListener collisionListener) {
-        return collisionListeners.add(collisionListener);
-    }
-
-    @Override
-    public boolean removeCollisionListener(CollisionListener collisionListener) {
-        return collisionListeners.remove(collisionListener);
     }
 }

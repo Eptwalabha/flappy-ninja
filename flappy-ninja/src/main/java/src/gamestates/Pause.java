@@ -20,7 +20,6 @@ public class Pause extends BasicGameState {
 
     @Override
     public void init(GameContainer gameContainer, StateBasedGame stateBasedGame) throws SlickException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

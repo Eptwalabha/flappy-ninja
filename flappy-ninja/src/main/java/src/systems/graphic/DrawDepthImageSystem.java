@@ -29,8 +29,6 @@ public class DrawDepthImageSystem extends EntitySystem {
     ComponentMapper<Texture> textureComponentMapper;
     @Mapper
     ComponentMapper<Position> positionComponentMapper;
-    @Mapper
-    ComponentMapper<Transformation> transformationComponentMapper;
 
     private Camera camera;
 
@@ -43,13 +41,8 @@ public class DrawDepthImageSystem extends EntitySystem {
 
         Texture texture = textureComponentMapper.get(entity);
         Position position = positionComponentMapper.get(entity);
-        Transformation transformation = transformationComponentMapper.getSafe(entity);
 
         Image image = texture.image;
-
-        if (transformation != null) {
-            // TODO appliquer les transformations scale et rotation sur l'image.
-        }
 
         image.draw(position.getX() - camera.cameraPosition.getX(), camera.screenHeight - (position.getY() - camera.cameraPosition.getY()));
     }

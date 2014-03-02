@@ -11,14 +11,16 @@ import org.newdawn.slick.geom.Shape;
  */
 public class EntityShape extends Component {
 
-    public int depth;
     public Shape shape;
-    public Color color;
+    public boolean fill;
 
-    public EntityShape(Shape shape, Color color, int depth) {
+    public EntityShape(Shape shape) {
+        this(shape, true);
+    }
+
+    public EntityShape(Shape shape, boolean fill) {
         this.shape = shape;
-        this.color = color;
-        this.depth = depth;
+        this.fill = fill;
     }
 
 }

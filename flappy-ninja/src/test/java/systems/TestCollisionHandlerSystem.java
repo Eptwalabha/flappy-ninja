@@ -12,6 +12,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Shape;
 import src.components.EntityShape;
+import src.components.Position;
 import src.systems.collision.CollisionHandler;
 import src.systems.collision.CollisionPair;import src.systems.collision.CollisionSystem;
 import src.systems.collision.handlers.BasicCollisionHandler;
@@ -122,18 +123,9 @@ public class TestCollisionHandlerSystem {
             }
 
             @Override
-            public void clearAllCollisionListener() {
-            }
-
-            @Override
             public boolean addCollisionListener(CollisionListener collisionListener) {
                 this.collisionListener = collisionListener;
                 return true;
-            }
-
-            @Override
-            public boolean removeCollisionListener(CollisionListener collisionListener) {
-                return false;
             }
         };
 
@@ -292,7 +284,8 @@ public class TestCollisionHandlerSystem {
     }
 
     private void makeThisEntityValidForCollisionSystem(Entity entity, float positionX, float positionY, float width, float height) {
-        entity.addComponent(new EntityShape(new Rectangle(positionX, positionY, width, height), Color.green, 0));
+        entity.addComponent(new EntityShape(new Rectangle(positionX, positionY, width, height)));
+        entity.addComponent(new Position(positionX, positionY));
         entity.changedInWorld();
     }
 

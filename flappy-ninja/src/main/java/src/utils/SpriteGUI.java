@@ -42,7 +42,7 @@ public class SpriteGUI {
     public void setCenterPivotPosition(int pivotX, int pivotY){
 
         this.pivotX = this.calculCenterOfRotation((float) this.tileWidth, pivotX);
-        this.pivotY = this.calculCenterOfRotation((float) (this.tileWidth * this.tileRatio), pivotY);
+        this.pivotY = this.calculCenterOfRotation(this.tileWidth * this.tileRatio, pivotY);
 
     }
 

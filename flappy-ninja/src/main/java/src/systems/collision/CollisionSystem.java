@@ -4,6 +4,7 @@ import com.artemis.*;
 import com.artemis.annotations.Mapper;
 import com.artemis.utils.ImmutableBag;
 import src.components.EntityShape;
+import src.components.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class CollisionSystem extends EntitySystem {
     private long numberOfCollision = 0;
 
     public CollisionSystem() {
-        super(Aspect.getAspectForAll(EntityShape.class));
+        super(Aspect.getAspectForAll(Position.class, EntityShape.class));
         listOfCollisionPairs = new ArrayList<CollisionPair>();
     }
 
