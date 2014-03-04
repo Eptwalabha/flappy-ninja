@@ -11,16 +11,24 @@ import org.newdawn.slick.geom.Shape;
  */
 public class EntityShape extends Component {
 
-    public Shape shape;
-    public boolean fill;
+    public Position position;
+    public float width;
+    public float height;
 
-    public EntityShape(Shape shape) {
-        this(shape, true);
+    public EntityShape(Position position, float width, float height) {
+        this.position = position;
+        this.width = width;
+        this.height = height;
     }
 
-    public EntityShape(Shape shape, boolean fill) {
-        this.shape = shape;
-        this.fill = fill;
-    }
+    public boolean intersects(EntityShape entityShape) {
 
+        float xA = position.getX();
+        float yA = position.getY();
+        float xB = entityShape.position.getX();
+        float yB = entityShape.position.getY();
+
+        return  (xA + width >= xB) && (xA <= xB + entityShape.width) &&
+                (yA - height <= yB) && (yA >= yB - entityShape.height);
+    }
 }

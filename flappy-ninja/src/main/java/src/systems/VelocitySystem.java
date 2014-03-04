@@ -32,7 +32,7 @@ public class VelocitySystem extends EntityProcessingSystem {
         Position position = positionComponentMapper.get(entity);
 
         velocity.x = (velocity.x > 300) ? 300 : velocity.x;
-        velocity.y = (velocity.y > 500) ? 500 : velocity.y;
+        velocity.y = (velocity.y > 600) ? 600 : velocity.y;
 
         position.x += velocity.x * world.getDelta() / 1000f;
         position.y += velocity.y * world.getDelta() / 1000f;

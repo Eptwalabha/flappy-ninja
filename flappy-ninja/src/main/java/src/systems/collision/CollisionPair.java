@@ -64,7 +64,7 @@ public class CollisionPair {
         EntityShape entityShapeA = collisionSystem.getEntityShapeFor(entityA);
         EntityShape entityShapeB = collisionSystem.getEntityShapeFor(entityB);
 
-        return entityShapeA != null && entityShapeB != null && (entityShapeA.shape.intersects(entityShapeB.shape) || entityShapeB.shape.contains(entityShapeA.shape));
+        return entityShapeA != null && entityShapeB != null && (entityShapeA.intersects(entityShapeB));
     }
 
     public void setCollisionSystem(CollisionSystem collisionSystem) {

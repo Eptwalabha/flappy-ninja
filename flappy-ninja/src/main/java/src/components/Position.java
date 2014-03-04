@@ -50,4 +50,9 @@ public class Position extends Component {
         this.y -= origin.getY();
         this.origin = origin;
     }
+
+    public void setLocation(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 }

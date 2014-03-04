@@ -83,7 +83,9 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         world.setSystem(new ButtonSystem(gameContainer));
         world.setSystem(new DebugDrawEntityShapeSystem(gameContainer, cameraInformation), false);
         world.setSystem(new DebugDrawVelocitySystem(gameContainer, cameraInformation), false);
+        world.setSystem(new DebugDrawPositionSystem(gameContainer, cameraInformation), false);
         world.setSystem(new DrawButtonSystem(gameContainer), false);
+        world.setSystem(new DeleteEntitySystem());
 
         Entity ninja = EntityFactory.createNinja(world, worldOrigin, speed);
         scorePoint = ninja.getComponent(Score.class);
@@ -109,6 +111,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         world.getSystem(DebugDrawEntityShapeSystem.class).process();
         world.getSystem(DebugDrawVelocitySystem.class).process();
+        world.getSystem(DebugDrawPositionSystem.class).process();
 
         graphics.setColor(Color.white);
 

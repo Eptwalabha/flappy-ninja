@@ -22,7 +22,7 @@ public class DebugDrawEntityShapeSystem extends EntitySystem {
     @Mapper
     ComponentMapper<Position> positionComponentMapper;
     @Mapper
-    ComponentMapper<EntityShape> entityShapeComponentMapper;
+    ComponentMapper<Slick2DShape> slick2DShapeComponentMapper;
     @Mapper
     ComponentMapper<EntityColor> entityColorComponentMapper;
     @Mapper
@@ -32,7 +32,7 @@ public class DebugDrawEntityShapeSystem extends EntitySystem {
     private Camera camera;
 
     public DebugDrawEntityShapeSystem(GameContainer gameContainer, Camera camera) {
-        super(Aspect.getAspectForAll(Position.class, EntityShape.class));
+        super(Aspect.getAspectForAll(Position.class, Slick2DShape.class));
         this.graphics = gameContainer.getGraphics();
         this.camera = camera;
     }
@@ -40,7 +40,7 @@ public class DebugDrawEntityShapeSystem extends EntitySystem {
     public void drawEntity(Entity entity) {
 
         Position position = positionComponentMapper.get(entity);
-        EntityShape shape = entityShapeComponentMapper.get(entity);
+        Slick2DShape shape = slick2DShapeComponentMapper.get(entity);
         EntityColor color = entityColorComponentMapper.getSafe(entity);
 
         shape.shape.setLocation(position.getX() - camera.cameraPosition.getX(), camera.screenHeight - position.getY() - camera.cameraPosition.getY());

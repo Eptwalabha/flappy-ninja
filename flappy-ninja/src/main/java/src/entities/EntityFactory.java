@@ -22,12 +22,14 @@ public class EntityFactory {
 
         Entity ninja = world.createEntity();
 
-        ninja.addComponent(new Position(100, 250, origin));
+        Position positionNinja = new Position(100, 250, origin);
+        ninja.addComponent(positionNinja);
         ninja.addComponent(new Gravity(1400));
         ninja.addComponent(new Friction(.5f));
         ninja.addComponent(new Velocity(speed, 500));
-        ninja.addComponent(new EntityShape(new Circle(0f, 0f, 10f)));
+        ninja.addComponent(new Slick2DShape(new Circle(0f, 0f, 10f)));
         ninja.addComponent(new EntityColor(Color.blue));
+        ninja.addComponent(new EntityShape(positionNinja, 20, 20));
         ninja.addComponent(new EntityDepth(0));
         ninja.addComponent(new InputComponent());
         ninja.addComponent(new Score());
@@ -40,7 +42,8 @@ public class EntityFactory {
 
         Entity box = world.createEntity();
         Position positionBox = new Position(posX, posY, origin);
-        box.addComponent(new EntityShape(new Rectangle(posX, posY, width, height)));
+        box.addComponent(new Slick2DShape(new Rectangle(posX, posY, width, height)));
+        box.addComponent(new EntityShape(positionBox, width, height));
         box.addComponent(new EntityColor(color));
         box.addComponent(new EntityDepth(depth));
 
@@ -103,7 +106,7 @@ public class EntityFactory {
         deleteThatEntityWhenOutOfBound(triggerPoint, camera.cameraPosition,
                 -100, -100, camera.screenWidth + 3 * 100, camera.screenHeight + 2 * 100);
         triggerPoint.addComponent(new Value(1));
-        triggerPoint.getComponent(EntityShape.class).fill = false;
+        triggerPoint.getComponent(Slick2DShape.class).fill = false;
         triggerPoint.addToWorld();
         groupManager.add(triggerPoint, Constant.Collision.POINT);
 
