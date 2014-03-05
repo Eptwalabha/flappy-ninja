@@ -64,9 +64,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         camera.addToWorld();
 
         // ajout des systèmes.
-        CollisionSystem collisionSystem = new CollisionSystem();
-        CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, Constant.Collision.PLAYER, Constant.Collision.POINT);
-        collisionSystem.addNewCollisionPair(collisionPlayerPoint);
+        CollisionSystem collisionSystem = prepareCollisionSystem();
 
         world.setSystem(collisionSystem);
 
@@ -95,6 +93,24 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
             EntityFactory.createRecordBoard(world, worldOrigin, bestTime);
 
         timeStart = System.currentTimeMillis();
+    }
+
+    private CollisionSystem prepareCollisionSystem() {
+        CollisionSystem collisionSystem = new CollisionSystem();
+
+        // collision player-points
+        CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, Constant.Collision.PLAYER, Constant.Collision.POINT);
+        collisionSystem.addNewCollisionPair(collisionPlayerPoint);
+
+        // collision player-environment (death)
+        CollisionPair collisionKilling = CollisionHandlerFactory.getKillingHandler(world, Constant.Collision.PLAYER, Constant.Collision.ENVIRONMENT);
+        collisionSystem.addNewCollisionPair(collisionKilling);
+
+        // collision player-environment (bouncing)
+        CollisionPair collisionBouncing = CollisionHandlerFactory.getBouncingHandler(world, Constant.Collision.PLAYER, Constant.Collision.ENVIRONMENT);
+        collisionSystem.addNewCollisionPair(collisionBouncing);
+
+        return collisionSystem;
     }
 
     @Override

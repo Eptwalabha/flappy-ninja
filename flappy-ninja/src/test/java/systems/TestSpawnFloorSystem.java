@@ -9,7 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.newdawn.slick.SlickException;
 import src.components.*;
-import src.entities.EntityFactory;import src.systems.SpawnFloorSystem;
+import src.entities.EntityFactory;
+import src.systems.SpawnFloorSystem;
 
 import static org.fest.assertions.Assertions.assertThat;
 

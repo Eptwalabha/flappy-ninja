@@ -57,7 +57,6 @@ public class CollisionPair {
     }
 
     private boolean entitiesCollide(Entity entityA, Entity entityB) {
-
         if (collisionSystem == null)
             return false;
 
@@ -71,8 +70,8 @@ public class CollisionPair {
         this.collisionSystem = collisionSystem;
     }
 
-    public void addCollisionHandler(CollisionHandler collisionHandler) {
-        collisionHandlers.add(collisionHandler);
+    public boolean addCollisionHandler(CollisionHandler collisionHandler) {
+        return collisionHandlers.add(collisionHandler);
     }
 
     public boolean removeCollisionHandler(CollisionHandler collisionHandler) {

@@ -5,9 +5,6 @@ import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import org.junit.Before;
 import org.junit.Test;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.geom.Circle;
-import org.newdawn.slick.geom.Shape;
 import src.components.*;
 import src.entities.EntityFactory;
 import src.systems.collision.*;
@@ -52,7 +49,7 @@ public class TestPointEarningCollisionHandler {
         addEntityToGroup(point2, groupB);
         addEntityToGroup(point3, groupB);
 
-        Shape playerShape = player.getComponent(EntityShape.class).shape;
+        Position playerPosition = player.getComponent(Position.class);
         Score score = player.getComponent(Score.class);
 
         CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, groupA, groupB);
@@ -61,18 +58,18 @@ public class TestPointEarningCollisionHandler {
         world.process();
         assertThat(score.score).isEqualTo(0);
 
-        playerShape.setLocation(100, 0);
+        playerPosition.setLocation(100, 0);
 
         world.process();
         assertThat(score.score).isEqualTo(1);
 
-        playerShape.setLocation(0, 100);
+        playerPosition.setLocation(0, 100);
 
         world.process();
         assertThat(score.score).isEqualTo(1 + 2);
 
         player.addComponent(new Death());
-        playerShape.setLocation(100, 100);
+        playerPosition.setLocation(100, 100);
 
         world.process();
         assertThat(score.score).isEqualTo(1 + 2);
@@ -87,7 +84,7 @@ public class TestPointEarningCollisionHandler {
         Entity point1 = createAPoint(origin, 100, 0, 10, 1);
         addEntityToGroup(point1, groupB);
 
-        Shape playerShape = player.getComponent(EntityShape.class).shape;
+        Position playerPosition = player.getComponent(Position.class);
         Score score = player.getComponent(Score.class);
 
         CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, groupA, groupB);
@@ -97,7 +94,7 @@ public class TestPointEarningCollisionHandler {
         world.process();
         assertThat(score.score).isEqualTo(0);
 
-        playerShape.setLocation(100, 0);
+        playerPosition.setLocation(100, 0);
 
         world.process();
         assertThat(score.score).isEqualTo(1);
@@ -110,8 +107,9 @@ public class TestPointEarningCollisionHandler {
     private Entity createAPoint(Position origin, float positionX, float positionY, float radius, int value) {
 
         Entity point = world.createEntity();
-        point.addComponent(new Position(positionX, positionY, origin));
-        point.addComponent(new EntityShape(new Circle(positionX, positionY, radius)));
+        Position position = new Position(positionX, positionY, origin);
+        point.addComponent(position);
+        point.addComponent(new EntityShape(position, radius, radius));
         point.addComponent(new Value(value));
         point.addToWorld();
         return point;

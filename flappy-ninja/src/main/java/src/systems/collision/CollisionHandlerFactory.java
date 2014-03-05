@@ -14,22 +14,34 @@ public class CollisionHandlerFactory {
 
     public static CollisionPair getCollisionPlayerPoint(World world, String groupA, String groupB) {
         CollisionPair collisionPlayerPoint = new CollisionPair(world, groupA, groupB);
-        PointEarning collisionHandler = new PointEarning();
-        collisionPlayerPoint.addCollisionHandler(collisionHandler);
+        addEarningPointToCollisionPair(collisionPlayerPoint);
         return collisionPlayerPoint;
     }
 
     public static CollisionPair getBouncingHandler(World world, String groupA, String groupB) {
         CollisionPair collisionBouncing = new CollisionPair(world, groupA, groupB);
-        BouncingCollision collisionHandler = new BouncingCollision();
-        collisionBouncing.addCollisionHandler(collisionHandler);
+        addBouncingHandlerToCollisionPair(collisionBouncing);
         return collisionBouncing;
     }
 
     public static CollisionPair getKillingHandler(World world, String groupA, String groupB) {
         CollisionPair collisionBouncing = new CollisionPair(world, groupA, groupB);
+        addKillingHandlerToCollisionPair(collisionBouncing);
+        return collisionBouncing;
+    }
+
+    public static void addEarningPointToCollisionPair(CollisionPair collisionPlayerPoint) {
+        PointEarning collisionHandler = new PointEarning();
+        collisionPlayerPoint.addCollisionHandler(collisionHandler);
+    }
+
+    public static void addKillingHandlerToCollisionPair(CollisionPair collisionBouncing) {
         KillingCollision collisionHandler = new KillingCollision();
         collisionBouncing.addCollisionHandler(collisionHandler);
-        return collisionBouncing;
+    }
+
+    public static void addBouncingHandlerToCollisionPair(CollisionPair collisionPair) {
+        BouncingCollision collisionHandler = new BouncingCollision();
+        collisionPair.addCollisionHandler(collisionHandler);
     }
 }

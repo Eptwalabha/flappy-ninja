@@ -16,4 +16,9 @@ public class Velocity extends Component {
         this.x = x;
         this.y = y;
     }
+
+    public void setVelocity(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 }

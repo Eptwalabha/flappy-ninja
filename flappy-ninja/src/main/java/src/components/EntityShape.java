@@ -31,4 +31,22 @@ public class EntityShape extends Component {
         return  (xA + width >= xB) && (xA <= xB + entityShape.width) &&
                 (yA - height <= yB) && (yA >= yB - entityShape.height);
     }
+
+    public float getCoefficient(EntityShape entityShapeB) {
+
+        float posXA = position.getX() + width / 2f;
+        float posYA = position.getY() - height / 2f;
+
+        float posXB = entityShapeB.position.getX() + entityShapeB.width / 2f;
+        float posYB = entityShapeB.position.getY() - entityShapeB.height / 2f;
+
+        if (posXB - posXA == 0)
+            return 10f;
+
+        return (posYB - posYA) / (posXB - posXA);
+    }
+
+    public float getCoefficient() {
+        return height / width;
+    }
 }

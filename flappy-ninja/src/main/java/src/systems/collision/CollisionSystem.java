@@ -41,9 +41,9 @@ public class CollisionSystem extends EntitySystem {
         return true;
     }
 
-    public void addNewCollisionPair(CollisionPair collisionPair) {
+    public boolean addNewCollisionPair(CollisionPair collisionPair) {
         collisionPair.setCollisionSystem(this);
-        listOfCollisionPairs.add(collisionPair);
+        return listOfCollisionPairs.add(collisionPair);
     }
 
     public EntityShape getEntityShapeFor(Entity entity) {

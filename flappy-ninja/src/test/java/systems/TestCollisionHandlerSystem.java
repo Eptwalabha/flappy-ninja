@@ -8,9 +8,6 @@ import com.artemis.managers.GroupManager;
 import com.artemis.utils.ImmutableBag;
 import org.junit.Before;
 import org.junit.Test;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Shape;
 import src.components.EntityShape;
 import src.components.Position;
 import src.systems.collision.CollisionHandler;
@@ -116,7 +113,6 @@ public class TestCollisionHandlerSystem {
         CollisionHandler collisionHandler = new CollisionHandler() {
 
             CollisionListener collisionListener;
-            @Override
             public void collide(Entity entityA, Entity entityB) {
                 if (collisionListener != null)
                     collisionListener.hasCollide(entityA, entityB);
@@ -137,9 +133,9 @@ public class TestCollisionHandlerSystem {
 
         Entity entityA = createValidEntityForCollisionSystem(0, 0, 10, 10);
         Entity entityB = createValidEntityForCollisionSystem(100, 0, 10, 10);
-        Entity entityC = createValidEntityForCollisionSystem(110, -50, 100, 100);
+        Entity entityC = createValidEntityForCollisionSystem(110, 50, 100, 100);
 
-        Shape shapeA = entityA.getComponent(EntityShape.class).shape;
+        Position positionA = entityA.getComponent(Position.class);
 
         addEntityToGroup(entityA, groupA);
         addEntityToGroup(entityB, groupB);
@@ -157,7 +153,7 @@ public class TestCollisionHandlerSystem {
         testIfCollisionListenerHasBeenTriggeredACertainNumberOfTime(collisionListener, 0);
 
         // A intersects with B
-        shapeA.setLocation(90, 0);
+        positionA.setLocation(90, 0);
 
         world.process();
         assertThat(collisionSystem.numberOfProcess).isEqualTo(2);
@@ -165,14 +161,14 @@ public class TestCollisionHandlerSystem {
         testIfCollisionListenerHasBeenTriggeredACertainNumberOfTime(collisionListener, 1);
 
         // A doesn't collide
-        shapeA.setLocation(0, 0);
+        positionA.setLocation(0, 0);
 
         world.process();
         assertThat(collisionSystem.getNumberOfCollision()).isEqualTo(0);
         testIfCollisionListenerHasBeenTriggeredACertainNumberOfTime(collisionListener, 1);
 
         // A intersects with B and C
-        shapeA.setLocation(105, 0);
+        positionA.setLocation(105, 0);
 
         world.process();
         assertThat(collisionSystem.getNumberOfCollision()).isEqualTo(2);
@@ -186,7 +182,7 @@ public class TestCollisionHandlerSystem {
         testIfCollisionListenerHasBeenTriggeredACertainNumberOfTime(collisionListener, 4);
 
         // A doesn't intersects C, but C contains A, so the listener should be triggered
-        shapeA.setLocation(150, 0);
+        positionA.setLocation(150, 0);
 
         world.process();
         assertThat(collisionSystem.getNumberOfCollision()).isEqualTo(1);
@@ -219,7 +215,7 @@ public class TestCollisionHandlerSystem {
         addEntityToGroup(entityA, groupA);
         addEntityToGroup(entityB, groupB);
 
-        Shape shapeA = entityA.getComponent(EntityShape.class).shape;
+        Position positionA = entityA.getComponent(Position.class);
 
         world.process();
 
@@ -228,7 +224,7 @@ public class TestCollisionHandlerSystem {
         testIfCollisionListenerHasBeenTriggeredACertainNumberOfTime(mockCollisionListenerB1, 0);
 
         // shapeA collides with shapeB
-        shapeA.setLocation(90, 0);
+        positionA.setLocation(90, 0);
 
         world.process();
 
@@ -284,8 +280,9 @@ public class TestCollisionHandlerSystem {
     }
 
     private void makeThisEntityValidForCollisionSystem(Entity entity, float positionX, float positionY, float width, float height) {
-        entity.addComponent(new EntityShape(new Rectangle(positionX, positionY, width, height)));
-        entity.addComponent(new Position(positionX, positionY));
+        Position position = new Position(positionX, positionY);
+        entity.addComponent(position);
+        entity.addComponent(new EntityShape(position, width, height));
         entity.changedInWorld();
     }
 
@@ -314,10 +311,10 @@ public class TestCollisionHandlerSystem {
         }
 
         @Override
-        public void addNewCollisionPair(CollisionPair collisionPair) {
+        public boolean addNewCollisionPair(CollisionPair collisionPair) {
             super.addNewCollisionPair(collisionPair);
             collisionPair.setCollisionSystem(this);
-            listOfCollisionPairs.add(collisionPair);
+            return listOfCollisionPairs.add(collisionPair);
         }
 
         @Override
