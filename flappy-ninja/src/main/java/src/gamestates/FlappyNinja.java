@@ -8,16 +8,15 @@ import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import src.Constant;
-import src.components.Camera;
-import src.components.Position;
-import src.components.Score;
-import src.components.Velocity;
+import src.components.*;
 import src.entities.EntityFactory;
 import src.entities.GuiFactory;
 import src.systems.*;
 import src.systems.collision.CollisionHandlerFactory;
 import src.systems.collision.CollisionPair;
 import src.systems.collision.CollisionSystem;
+import src.systems.collision.handlers.BouncingCollision;
+import src.systems.collision.handlers.KillingCollision;
 import src.systems.graphic.*;
 import src.systems.gui.ButtonHandler;
 import src.systems.gui.ButtonSystem;
@@ -32,7 +31,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
     private World world;
     public long timeStart = 0;
-    public float bestTime = 0;
+    public float bestDistance = 0;
     public long bestScore = 0;
     private StateBasedGame parent;
     private Entity camera;
@@ -48,7 +47,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         // l'origine du jeu toutes les autres positions l'ont en référence
         Position worldOrigin = new Position(0, 0);
-        float speed = 300;
+        float speed = 200;
 
 //        SpriteGUI spriteGUI = new SpriteGUI("images/all_tiles.png", 12, 1);
         parent = stateBasedGame;
@@ -73,7 +72,7 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
 
         world.setSystem(new InputSystem(gameContainer));
 
-        world.setSystem(new SpawnPipeSystem(800, cameraInformation));
+        world.setSystem(new SpawnPipeSystem(1000, cameraInformation));
         world.setSystem(new SpawnFloorSystem(cameraInformation));
         world.setSystem(new DeleteEntityOutOfLimitSystem());
 
@@ -89,8 +88,17 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         scorePoint = ninja.getComponent(Score.class);
         ninja.addToWorld();
 
-        if (bestTime > 0)
-            EntityFactory.createRecordBoard(world, worldOrigin, bestTime);
+        Entity floor = EntityFactory.createBox(world, cameraInformation.cameraPosition, 0, 50*2/3, cameraInformation.screenWidth, 100);
+        EntityFactory.addColorToEntity(floor, Color.red);
+        EntityFactory.addDepthToEntity(floor, 1);
+        world.getManager(GroupManager.class).add(floor, Constant.Collision.ENVIRONMENT);
+        Entity roof = EntityFactory.createBox(world, cameraInformation.cameraPosition, 0, cameraInformation.screenHeight + 100, cameraInformation.screenWidth, 100);
+        EntityFactory.addColorToEntity(roof, Color.red);
+        EntityFactory.addDepthToEntity(roof, 1);
+        world.getManager(GroupManager.class).add(roof, Constant.Collision.ENVIRONMENT);
+
+        if (bestDistance > 0)
+            EntityFactory.createRecordBoard(world, worldOrigin, bestDistance);
 
         timeStart = System.currentTimeMillis();
     }
@@ -102,13 +110,16 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         CollisionPair collisionPlayerPoint = CollisionHandlerFactory.getCollisionPlayerPoint(world, Constant.Collision.PLAYER, Constant.Collision.POINT);
         collisionSystem.addNewCollisionPair(collisionPlayerPoint);
 
+        CollisionPair collisionPlayerEnvironment = new CollisionPair(world, Constant.Collision.PLAYER, Constant.Collision.ENVIRONMENT);
         // collision player-environment (death)
-        CollisionPair collisionKilling = CollisionHandlerFactory.getKillingHandler(world, Constant.Collision.PLAYER, Constant.Collision.ENVIRONMENT);
-        collisionSystem.addNewCollisionPair(collisionKilling);
-
+        KillingCollision killingCollision = new KillingCollision();
         // collision player-environment (bouncing)
-        CollisionPair collisionBouncing = CollisionHandlerFactory.getBouncingHandler(world, Constant.Collision.PLAYER, Constant.Collision.ENVIRONMENT);
-        collisionSystem.addNewCollisionPair(collisionBouncing);
+        BouncingCollision bouncingCollision = new BouncingCollision();
+        killingCollision.addCollisionListener(this);
+        collisionPlayerEnvironment.addCollisionHandler(killingCollision);
+        collisionPlayerEnvironment.addCollisionHandler(bouncingCollision);
+
+        collisionSystem.addNewCollisionPair(collisionPlayerEnvironment);
 
         return collisionSystem;
     }
@@ -178,11 +189,16 @@ public class FlappyNinja extends BasicGameState implements InputListener, Collis
         Entity button = GuiFactory.createButton(world, "restart", 250, 300, buttonHandler);
         button.addToWorld();
 
-        float time = System.currentTimeMillis() - timeStart;
+        float distance = position.getX();
+        long score = entityA.getComponent(Score.class).score;
 
-        if (time > bestTime) {
-            bestTime = time;
-            System.out.println("new best score!");
+        if (distance > bestDistance) {
+            bestDistance = distance;
+            System.out.println("new best score! distance = " + Math.floor(distance) / 100f + "m");
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            System.out.println("new best score! score = " + score);
         }
     }
 }

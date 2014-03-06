@@ -8,5 +8,5 @@ import com.artemis.Component;
  * Time: 19:41
  */
 public class Score extends Component {
-    public int score;
+    public long score;
 }

@@ -38,15 +38,12 @@ public class EntityFactory {
         return ninja;
     }
 
-    public static Entity createBox(World world, Position origin, float posX, float posY, float width, float height, Color color, int depth) {
+    public static Entity createBox(World world, Position origin, float posX, float posY, float width, float height) {
 
         Entity box = world.createEntity();
         Position positionBox = new Position(posX, posY, origin);
         box.addComponent(new Slick2DShape(new Rectangle(posX, posY, width, height)));
         box.addComponent(new EntityShape(positionBox, width, height));
-        box.addComponent(new EntityColor(color));
-        box.addComponent(new EntityDepth(depth));
-
         box.addComponent(positionBox);
 
         return box;
@@ -57,54 +54,53 @@ public class EntityFactory {
         GroupManager groupManager = world.getManager(GroupManager.class);
         space = (space > 300) ? 300 : space;
         space = (space < 75) ? 75 : space;
-        float spacePosition = (float) Math.random() * (camera.screenHeight - 2 * 80 - space);
-        float pipeWidth = 40 ;
+        float spacePosition = (float) Math.random() * (camera.screenHeight - 2 * 80 - space) + 80;
 
-        float cameraPositionX = camera.cameraPosition.getX();
+        float pipeWidth = 40;
+        float endPipeHeight = 20;
+
         float cameraPositionY = camera.cameraPosition.getY();
-        float cameraWidth = camera.screenWidth;
-        float cameraHeight = camera.screenHeight;
-        float spawnPositionX = cameraPositionX + cameraWidth + 100;
-        float spawnPositionY = cameraPositionY + cameraHeight;
+        float positionYTopPipe = cameraPositionY + camera.screenHeight;
+        float positionXTopPipe = camera.cameraPosition.getX() + camera.screenWidth;
+
+        float positionYLowerPipe = cameraPositionY + spacePosition;
+        float positionYTopEndPipe = cameraPositionY + space + endPipeHeight + spacePosition;
+        float topPipeHeight = camera.screenHeight - (space + spacePosition);
+
         Position origin = camera.cameraPosition.origin;
 
-        Entity upperPipe = createBox(world, origin,
-                spawnPositionX, spawnPositionY,
-                pipeWidth, 80 + spacePosition, Color.red, 4);
-        deleteThatEntityWhenOutOfBound(upperPipe, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
+        Entity upperPipe = createBox(world, origin, positionXTopPipe, positionYTopPipe + endPipeHeight, pipeWidth, topPipeHeight);
+        addColorToEntity(upperPipe, Color.red);
+        addDepthToEntity(upperPipe, 4);
+        deleteThatEntityWhenOutOfBound(upperPipe, camera.cameraPosition, -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         upperPipe.addToWorld();
         groupManager.add(upperPipe, Constant.Collision.ENVIRONMENT);
 
-        Entity lowerPipe = createBox(world, origin,
-                spawnPositionX, spawnPositionY - (80 + spacePosition + space),
-                pipeWidth, 500 - (80 + spacePosition + space), Color.red, 4);
-        deleteThatEntityWhenOutOfBound(lowerPipe, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
+        Entity lowerPipe = createBox(world, origin, positionXTopPipe, positionYLowerPipe - endPipeHeight, pipeWidth, positionYLowerPipe);
+        addColorToEntity(lowerPipe, Color.red);
+        addDepthToEntity(lowerPipe, 4);
+        deleteThatEntityWhenOutOfBound(lowerPipe, camera.cameraPosition, -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         lowerPipe.addToWorld();
         groupManager.add(lowerPipe, Constant.Collision.ENVIRONMENT);
 
-        Entity bottomOfLowerPipe = createBox(world, origin,
-                spawnPositionX - 4, spawnPositionY - (80 + spacePosition) + 20,
-                pipeWidth + 8, 20, Color.red, 3);
-        deleteThatEntityWhenOutOfBound(bottomOfLowerPipe, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
-        bottomOfLowerPipe.addToWorld();
-        groupManager.add(bottomOfLowerPipe, Constant.Collision.ENVIRONMENT);
+        Entity bottomOfUpperPipe = createBox(world, origin, positionXTopPipe - 5, positionYTopEndPipe, pipeWidth + 10, endPipeHeight);
+        addColorToEntity(bottomOfUpperPipe, Color.red);
+        addDepthToEntity(bottomOfUpperPipe, 3);
+        deleteThatEntityWhenOutOfBound(bottomOfUpperPipe, camera.cameraPosition, -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
+        bottomOfUpperPipe.addToWorld();
+        groupManager.add(bottomOfUpperPipe, Constant.Collision.ENVIRONMENT);
 
-        Entity topOfBottomPipe = createBox(world, origin,
-                spawnPositionX - 4, spawnPositionY - (80 + spacePosition + space),
-                pipeWidth + 8, 20, Color.red, 3);
-        deleteThatEntityWhenOutOfBound(topOfBottomPipe, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
+        Entity topOfBottomPipe = createBox(world, origin, positionXTopPipe - 5, positionYLowerPipe, pipeWidth + 10, endPipeHeight);
+        addColorToEntity(topOfBottomPipe, Color.red);
+        addDepthToEntity(topOfBottomPipe, 3);
+        deleteThatEntityWhenOutOfBound(topOfBottomPipe, camera.cameraPosition, -100, -100, camera.screenWidth + 2 * 100, camera.screenHeight + 2 * 100);
         topOfBottomPipe.addToWorld();
         groupManager.add(topOfBottomPipe, Constant.Collision.ENVIRONMENT);
 
-        Entity triggerPoint = createBox(world, origin,
-                spawnPositionX + pipeWidth, spawnPositionY - 80 - spacePosition,
-                10, space, Color.blue, 3);
-        deleteThatEntityWhenOutOfBound(triggerPoint, camera.cameraPosition,
-                -100, -100, camera.screenWidth + 3 * 100, camera.screenHeight + 2 * 100);
+        Entity triggerPoint = createBox(world, origin, positionXTopPipe + pipeWidth / 2 + 10, positionYLowerPipe + space, 10, space);
+        addColorToEntity(triggerPoint, Color.blue);
+        addDepthToEntity(triggerPoint, 3);
+        deleteThatEntityWhenOutOfBound(triggerPoint, camera.cameraPosition, -100, -100, camera.screenWidth + 3 * 100, camera.screenHeight + 2 * 100);
         triggerPoint.addComponent(new Value(1));
         triggerPoint.getComponent(Slick2DShape.class).fill = false;
         triggerPoint.addToWorld();
@@ -112,10 +108,15 @@ public class EntityFactory {
 
     }
 
-    public static void createRecordBoard(World world, Position origin, float time) {
-        Entity stick = createBox(world, origin, 300 * time / 1000 - 2 + 100, 50, 4, 30, Color.gray, 2);
+    public static void createRecordBoard(World world, Position origin, float distance) {
+        Entity stick = createBox(world, origin, distance - 2, 50, 4, 30);
+        addColorToEntity(stick, Color.gray);
+        addDepthToEntity(stick, 2);
         stick.addToWorld();
-        Entity board = createBox(world, origin, 300 * time / 1000 - 20 + 100, 80, 40, 30, Color.green, 2);
+
+        Entity board = createBox(world, origin, distance - 20, 80, 40, 30);
+        addColorToEntity(board, Color.green);
+        addDepthToEntity(board, 2);
         board.addToWorld();
     }
 
@@ -139,7 +140,6 @@ public class EntityFactory {
     }
 
     public static int createFloor(World world, Camera camera, float tileWidth, int alreadySpawned) {
-
         int numberOfTilesToSpawn = (int) Math.floor((camera.cameraPosition.getX() + camera.screenWidth + 2 * tileWidth) / tileWidth) - alreadySpawned;
 
         for (int i = 0; i < numberOfTilesToSpawn; i++)
@@ -149,11 +149,12 @@ public class EntityFactory {
     }
 
     private static void createFloorTile(World world, Camera camera, float tileWidth, int tileIndex, int alreadySpawned) {
-        Entity floorTile = createBox(world, camera.cameraPosition.origin, tileIndex * tileWidth + alreadySpawned * tileWidth, camera.cameraPosition.origin.getY() + 2 * tileWidth / 3f, tileWidth, 50, Color.orange, 1);
+        Entity floorTile = createBox(world, camera.cameraPosition.origin, tileIndex * tileWidth + alreadySpawned * tileWidth, camera.cameraPosition.origin.getY() + 2 * tileWidth / 3f, tileWidth, 50);
+//        addColorToEntity(floorTile, Color.orange);
+        addDepthToEntity(floorTile, 1);
+        floorTile.getComponent(Slick2DShape.class).fill = false;
         float cameraMargin = 2 * tileWidth;
-        deleteThatEntityWhenOutOfBound(floorTile, camera.cameraPosition,
-                -cameraMargin, -cameraMargin,
-                2 * cameraMargin + camera.screenWidth, 2 * cameraMargin + camera.screenHeight);
+        deleteThatEntityWhenOutOfBound(floorTile, camera.cameraPosition, -cameraMargin, -cameraMargin, 2 * cameraMargin + camera.screenWidth, 2 * cameraMargin + camera.screenHeight);
         floorTile.addToWorld();
     }
 
@@ -161,5 +162,13 @@ public class EntityFactory {
         Limit limit = new Limit(offsetX, offsetY, width, height);
         limit.origin = origin;
         entity.addComponent(limit);
+    }
+
+    public static void addColorToEntity(Entity entity, Color color) {
+        entity.addComponent(new EntityColor(color));
+    }
+
+    public static void addDepthToEntity(Entity entity, int depth) {
+        entity.addComponent(new EntityDepth(depth));
     }
 }

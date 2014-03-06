@@ -18,5 +18,7 @@ public class KillingCollision extends CollisionHandler {
 
         for (CollisionListener collisionListener : collisionListeners)
             collisionListener.hasCollide(entityA, entityB);
+
+        this.clearAllCollisionListener();
     }
 }

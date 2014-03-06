@@ -27,6 +27,7 @@ public class TestKillingAndBouncingCollisionHandler {
     private CollisionSystem collisionSystem;
     private String groupA = "groupA";
     private String groupB = "groupB";
+    private MockCollisionListener mockCollisionListener;
 
     @Before
     public void setUp() {
@@ -36,8 +37,17 @@ public class TestKillingAndBouncingCollisionHandler {
         GroupManager groupManager = new GroupManager();
         world.setManager(groupManager);
 
+        mockCollisionListener = new MockCollisionListener();
         collisionSystem = new CollisionSystem();
         world.setSystem(collisionSystem);
+
+        CollisionPair collisionPair = new CollisionPair(world, groupA, groupB);
+        BouncingCollision bouncingHandler = new BouncingCollision();
+
+        assertThat(collisionPair.addCollisionHandler(bouncingHandler)).isTrue();
+        assertThat(bouncingHandler.addCollisionListener(mockCollisionListener)).isTrue();
+        assertThat(collisionSystem.addNewCollisionPair(collisionPair)).isTrue();
+        assertThat(mockCollisionListener.collisionCounter).isEqualTo(0);
     }
 
     @Test
@@ -120,15 +130,6 @@ public class TestKillingAndBouncingCollisionHandler {
         Position playerPosition = player.getComponent(Position.class);
         Velocity playerVelocity = player.getComponent(Velocity.class);
 
-        CollisionPair collisionPair = new CollisionPair(world, groupA, groupB);
-        BouncingCollision bouncingHandler = new BouncingCollision();
-        MockCollisionListener mockCollisionListener = new MockCollisionListener();
-
-        assertThat(collisionPair.addCollisionHandler(bouncingHandler)).isTrue();
-        assertThat(bouncingHandler.addCollisionListener(mockCollisionListener)).isTrue();
-        assertThat(collisionSystem.addNewCollisionPair(collisionPair)).isTrue();
-        assertThat(mockCollisionListener.collisionCounter).isEqualTo(0);
-
         playerVelocity.setVelocity(0, -500);
         playerPosition.setLocation(-10, 50);
 
@@ -158,9 +159,36 @@ public class TestKillingAndBouncingCollisionHandler {
         assertVelocityValue(playerVelocity, 500, 0);
     }
 
+    @Test
+    public void canVelocityChangeOnlyOnceWhenPlayerCollidesWithTwoElements() {
+
+        Position origin = new Position();
+        createAWall(origin, -50, 50, 100, 100);
+        createAWall(origin, -25, 50, 50, 100);
+        Entity player = EntityFactory.createNinja(world, origin, 0);
+        addEntityToGroup(player, groupA);
+
+        Position playerPosition = player.getComponent(Position.class);
+        Velocity playerVelocity = player.getComponent(Velocity.class);
+
+        playerVelocity.setVelocity(0, -500);
+        playerPosition.setLocation(-10, 50);
+
+        world.process();
+        assertThat(mockCollisionListener.collisionCounter).isEqualTo(1);
+        assertVelocityValue(playerVelocity, 0, 500);
+        assertPositionValue(playerPosition, -10, 90);
+
+    }
+
     private void assertVelocityValue(Velocity velocity, float expectedX, float expectedY) {
         assertThat(velocity.x).isEqualTo(expectedX);
         assertThat(velocity.y).isEqualTo(expectedY);
+    }
+
+    private void assertPositionValue(Position position, float expectedX, float expectedY) {
+        assertThat(position.x).isEqualTo(expectedX);
+        assertThat(position.y).isEqualTo(expectedY);
     }
 
     private Entity createAWall(Position origin, float positionX, float positionY, float width, float height) {
