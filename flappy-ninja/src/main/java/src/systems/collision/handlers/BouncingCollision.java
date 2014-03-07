@@ -25,8 +25,8 @@ public class BouncingCollision extends CollisionHandler {
         float coefficientAB = Math.abs(entityShapeA.getCoefficient(entityShapeB));
         float coefficient = Math.abs(entityShapeB.getCoefficient());
 
-        velocityA.y *= 0.8f;
-        velocityA.x *= 0.8f;
+//        velocityA.y *= 0.8f;
+//        velocityA.x *= 0.8f;
 
         if (coefficient < coefficientAB) {
 

@@ -21,7 +21,7 @@ import static org.fest.assertions.Assertions.assertThat;
  * Date: 02/03/14
  * Time: 00:16
  */
-public class TestKillingAndBouncingCollisionHandler {
+public class TestKillingCollisionHandler {
 
     private World world;
     private CollisionSystem collisionSystem;
@@ -79,44 +79,6 @@ public class TestKillingAndBouncingCollisionHandler {
         world.process();
         assertThat(mockCollisionListener.collisionCounter).isEqualTo(1);
         assertThat(player.getComponent(Death.class)).isNotNull();
-    }
-
-    @Test
-    public void canDetermineCoefficients() {
-
-        Entity boxA = createAWall(new Position(0, 0), 0, 0, 200, 500);
-        EntityShape entityShapeA = boxA.getComponent(EntityShape.class);
-        Position positionA = boxA.getComponent(Position.class);
-
-        Entity boxB = createAWall(new Position(0, 0), 0, 0, 500, 500);
-        EntityShape entityShapeB = boxB.getComponent(EntityShape.class);
-        Position positionB = boxB.getComponent(Position.class);
-
-        Entity boxC = createAWall(new Position(0, 0), 0, 0, 500, 500);
-        EntityShape entityShapeC = boxC.getComponent(EntityShape.class);
-        Position positionC = boxC.getComponent(Position.class);
-
-        assertThat(entityShapeA.getCoefficient()).isEqualTo(2.5f);
-        assertThat(entityShapeB.getCoefficient()).isEqualTo(1);
-        assertThat(entityShapeC.getCoefficient()).isEqualTo(1);
-
-        positionB.setLocation(-100, 0);
-        positionC.setLocation(100, 0);
-
-        assertThat(entityShapeB.getCoefficient(entityShapeC)).isEqualTo(0);
-
-        positionB.setLocation(-100, -50);
-        positionC.setLocation(100, 50);
-
-        assertThat(entityShapeB.getCoefficient(entityShapeC)).isEqualTo(0.5f);
-
-        // when coefficient is infinity, the method returns 10;
-        positionB.setLocation(100, -50);
-        positionC.setLocation(100, 50);
-
-        assertThat(entityShapeB.getCoefficient(entityShapeC)).isEqualTo(10f);
-
-
     }
 
     @Test
@@ -205,13 +167,4 @@ public class TestKillingAndBouncingCollisionHandler {
         world.getManager(GroupManager.class).add(player, group);
     }
 
-    private class MockCollisionListener implements CollisionListener {
-
-        public int collisionCounter = 0;
-
-        @Override
-        public void hasCollide(Entity entityA, Entity entityB) {
-            collisionCounter++;
-        }
-    }
 }
